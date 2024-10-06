@@ -1,0 +1,52 @@
+a {
+  transition: all 0.6s ease;
+}
+
+a:hover {
+  transform: scale(1.1);
+  background-color: #ffdc73;
+}
+
+.left .btn {
+  background-color: #fabc3c;
+  padding: 15px;
+  margin-top: 20px;
+  display: inline-block;
+  text-align: center;
+  width: 220px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  font-size: 16px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.homePage {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.left {
+  flex: 0.6;
+  margin-right: 30px;
+}
+
+.right {
+  flex: 1.4;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+.map-container {
+  height: 500px;
+  width: 100%;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  background-color: #fefefe;
+}

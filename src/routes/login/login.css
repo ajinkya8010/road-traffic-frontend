@@ -1,0 +1,62 @@
+.login {
+  height: 100%;
+  display: flex;
+}
+
+.login .formContainer {
+  flex: 3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login .formContainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login .formContainer form input {
+  padding: 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.login .formContainer form button {
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: teal;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login .formContainer form button:disabled {
+  background-color: #BED9D8;
+  cursor: not-allowed;
+}
+
+.login .formContainer form span {
+  color: rgba(255, 0, 0, 0.591);
+}
+
+.login .formContainer form a {
+  font-size: 14px;
+  color: gray;
+  border-bottom: 1px solid gray;
+  width: max-content;
+}
+
+.login .imgContainer {
+  flex: 2;
+  background-color: #fcf5f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login .imgContainer img {
+  width: 100%;
+}

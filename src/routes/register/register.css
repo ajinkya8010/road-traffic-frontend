@@ -1,0 +1,62 @@
+.registerPage {
+  height: 100%;
+  display: flex;
+}
+
+.registerPage .formContainer {
+  flex: 3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.registerPage .formContainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.registerPage .formContainer form input {
+  padding: 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.registerPage .formContainer form button {
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: teal;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.registerPage .formContainer form button:disabled {
+  background-color: #bed9d8;
+  cursor: not-allowed;
+}
+
+.registerPage .formContainer form span {
+  color: rgba(255, 0, 0, 0.591);
+}
+
+.registerPage .formContainer form a {
+  font-size: 14px;
+  color: gray;
+  border-bottom: 1px solid gray;
+  width: max-content;
+}
+
+.registerPage .imgContainer {
+  flex: 2;
+  background-color: #fcf5f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.registerPage .imgContainer img {
+  width: 100%;
+}

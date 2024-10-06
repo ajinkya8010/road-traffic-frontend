@@ -1,9 +1,11 @@
 import HomePage from "./routes/homePage/homePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Layout } from "./routes/layout/layout";
+import { Layout, RequireAuth } from "./routes/layout/layout";
 import Login from "./routes/login/login";
 import Register from "./routes/register/register";
-
+import Pothole from "./routes/pothole/pothole";
+import Complaint from "./routes/complaint/complaint";
+import Analysis from "./routes/analysis/analysis";
 function App() {
   const router = createBrowserRouter([
     {
@@ -21,6 +23,24 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        }
+      ]
+    },
+    {
+      path:"/",
+      element:<RequireAuth/>,
+      children:[
+        {
+          path: "/pothole",
+          element: <Pothole />,
+        },
+        {
+          path: "/complaint",
+          element: <Complaint />,
+        },
+        {
+          path:"/analysis",
+          element:<Analysis/>
         }
       ]
     }
