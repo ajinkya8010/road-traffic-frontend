@@ -44,17 +44,19 @@ const Pothole = () => {
     setIsLoading(true);
     setError("");
     const {lat,lng} = location; 
-    const userId = currentUser.id;
+    const userId = currentUser._id;
+    console.log(currentUser)
     try {
-      const res = await apiRequest.post("/auth/model/", {
+      const res = await apiRequest.post("/model/", {
         userId,
         lng,
         lat,
-        image
+        image},{
+        headers: {
+        'Content-Type': 'multipart/form-data',
+        }
       });
-      setMessage('Pothole image submitted successfully!');
-      setComplaint('');
-      setCategory(''); 
+      setMessage('Pothole image submitted successfully!'); 
     } catch (err) {
       setError("Error: " + err.message);
     } finally {
@@ -67,7 +69,7 @@ const Pothole = () => {
     <div className="pothole-container">
       <h2 className="pothole-title">Upload Pothole Image</h2>
 
-      <form className="pothole-form" onSubmit={handleSubmit}>
+      <form className="pothole-form" onSubmit={handleSubmit} >
         <div className="form-group">
           <label htmlFor="image-upload">Upload Image</label>
           <input

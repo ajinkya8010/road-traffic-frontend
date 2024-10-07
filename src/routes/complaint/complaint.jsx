@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import './Complaint.css';
 import { AuthContext } from '../../context/authContext';
 import apiRequest from '../../lib/apiRequest';
@@ -34,14 +34,10 @@ const Complaint = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    const formData = new FormData(e.target);
-
-    const complaint = formData.get("complaint");
-    const category = formData.get("category");
     const {lat,lng} = location; 
-    const userId = currentUser.id;
+    const userId = currentUser._id;
     try {
-      const res = await apiRequest.post("/auth/complaint", {
+      const res = await apiRequest.post("/complaint/", {
         userId,
         lng,
         lat,
@@ -85,11 +81,11 @@ const Complaint = () => {
             required
           >
             <option value="">Select Category</option>
-            <option value="pothole">Pothole</option>
-            <option value="signal">Poor traffic light timing or synchronization</option>
-            <option value="road_construction">Road construction or maintenance work</option>
-            <option value="parking">Illegal parking reducing road capacity</option>
-            <option value="other">Other</option>
+            <option value="Pothole">Pothole</option>
+            <option value="Poor traffic light timing or synchronization">Poor traffic light timing or synchronization</option>
+            <option value="Road construction or maintenance work">Road construction or maintenance work</option>
+            <option value="Illegal parking reducing road capacity">Illegal parking reducing road capacity</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 

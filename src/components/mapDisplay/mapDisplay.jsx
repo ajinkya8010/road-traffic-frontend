@@ -22,7 +22,7 @@ const MapDisplay = () => {
   // Fetch nearby places from your API
   const fetchPlaces = async () => {
     const apiKey = 'AlzaSyYtOdJC9QSxI0MITkzxG6-Rt6H-NaCiwhZ';  // Replace with your actual API key
-    const url = `https://maps.gomaps.pro/maps/api/place/nearbysearch/json?keyword=college|school|university&location=${position[0]},${position[1]}&radius=1000&language=en&key=${apiKey}`;
+    const url = `https://maps.gomaps.pro/maps/api/place/nearbysearch/json?keyword=college|school|university&location=${position[0]},${position[1]}&radius=200&language=en&key=${apiKey}`;
 
     try {
       const response = await fetch(url);
