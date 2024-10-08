@@ -9,9 +9,8 @@ const Pothole = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
-  // Automatically fetch user's location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -30,46 +29,51 @@ const Pothole = () => {
     }
   }, []);
 
-  // Handle image file input change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
     }
+    setMessage("");
+    setError("");
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    const {lat,lng} = location; 
+    const { lat, lng } = location; 
     const userId = currentUser._id;
-    console.log(currentUser)
+
     try {
       const res = await apiRequest.post("/model/", {
         userId,
         lng,
         lat,
-        image},{
+        image
+      }, {
         headers: {
-        'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',
         }
       });
-      setMessage('Pothole image submitted successfully!'); 
+
+      if (res.data.prediction !== 'pothole') {
+        setMessage(res.data.message);
+      } else {
+        setMessage('Pothole image submitted successfully!'); 
+      }
     } catch (err) {
       setError("Error: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="pothole-container">
       <h2 className="pothole-title">Upload Pothole Image</h2>
 
-      <form className="pothole-form" onSubmit={handleSubmit} >
+      <form className="pothole-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="image-upload">Upload Image</label>
           <input
@@ -93,12 +97,22 @@ const Pothole = () => {
         )}
 
         <div className="form-group">
-          <label>Location (auto-detected)</label>
+          <label>Location (auto-detected or manually enter)</label>
           <input
             type="text"
             className="location-input"
-            value={`Lat: ${location.lat}, Lng: ${location.lng}`}
-            readOnly
+            placeholder="Enter Latitude"
+            value={location.lat}
+            onChange={(e) => setLocation({ ...location, lat: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            className="location-input"
+            placeholder="Enter Longitude"
+            value={location.lng}
+            onChange={(e) => setLocation({ ...location, lng: e.target.value })}
+            required
           />
         </div>
 
@@ -107,11 +121,9 @@ const Pothole = () => {
         </button>
         {error && <span>{error}</span>}
         {message && <p className="success-message">{message}</p>}
-
       </form>
     </div>
   );
 }
 
 export default Pothole;
-

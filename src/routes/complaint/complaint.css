@@ -1,6 +1,6 @@
 .complaint-container {
     max-width: 600px;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 20px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -31,15 +31,6 @@
     margin-bottom: 8px;
   }
   
-  .complaint-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    resize: vertical;
-    height: 100px;
-  }
   
   .complaint-select,
   .complaint-input {
@@ -48,6 +39,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
+    background-color: #e9ecef;
   }
   
   .complaint-select {
@@ -75,10 +67,5 @@
     color: green;
     font-weight: bold;
     text-align: center;
-  }
-  
-  .complaint-input[readonly] {
-    background-color: #e9ecef;
-    cursor: not-allowed;
   }
   
