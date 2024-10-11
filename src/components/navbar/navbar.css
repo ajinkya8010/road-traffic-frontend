@@ -10,7 +10,7 @@ nav a {
 }
 
 nav a:hover {
-  transform: scale(1.05); /* 'scale' should be replaced with 'transform' in CSS */
+  transform: scale(1.08); /* 'scale' should be replaced with 'transform' in CSS */
 }
 
 nav .left {
@@ -71,19 +71,6 @@ nav .right .user .profile {
   position: relative;
 }
 
-nav .right .user .profile .notification {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: red;
-  color: white;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 nav .right .register {
   background-color: #fece51;
@@ -118,4 +105,24 @@ nav .right .menu {
 
 nav .right .menu.active {
   right: 0;
+}
+
+/* Style for the Logout button to match the Register button */
+nav .right .logout {
+  background-color: #fece51; /* Same color as Register button */
+  color: black;
+  padding: 12px 24px;
+  margin: 20px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.4s ease; /* Smooth transition for hover effect */
+}
+
+/* Hover effect for the Logout button */
+nav .right .logout:hover {
+  transform: scale(1.08); /* Slightly enlarge on hover */
+}
+
+nav .left a:hover {
+  background-color: transparent !important; /* Ensure no background color on hover */
 }

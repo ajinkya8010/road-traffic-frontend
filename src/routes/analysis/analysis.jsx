@@ -5,12 +5,11 @@ import FestivalChecker from '../../components/festivalChecker/festivalChecker';
 
 const Analysis = () => {
   return (
-    <div>
-      <MapRouting/>
-      <FestivalChecker/>
+    <div className="analysisPage scrollable">
+      <MapRouting />
+      <FestivalChecker />
     </div>
-
-  )
-}
+  );
+};
 
 export default Analysis;
