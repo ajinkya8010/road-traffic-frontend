@@ -1,0 +1,19 @@
+/* MapRouting.css */
+
+/* Styles for complaint markers */
+.custom-marker-complaint {
+    background-color: pink; /* Background color for the complaint marker */
+  
+    width: 30px; /* Width of the marker */
+    height: 30px; /* Height of the marker */
+    box-shadow: none; /* No shadow */
+  }
+  
+  /* Styles for pothole markers */
+  .custom-marker-pothole {
+    background-color: yellow; /* Background color for the pothole marker */
+    width: 30px; /* Width of the marker */
+    height: 30px; /* Height of the marker */
+    box-shadow: none; /* No shadow */
+  }
+  
