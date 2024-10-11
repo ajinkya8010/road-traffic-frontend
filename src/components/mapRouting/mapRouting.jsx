@@ -8,6 +8,7 @@ import axios from 'axios'; // For API requests
 import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
 import 'leaflet-extra-markers/dist/js/leaflet.extra-markers.js';
 import 'leaflet-extra-markers';
+import apiRequest from "../../lib/apiRequest";
 // import "./MapRouting.css"
 
 const RoutingMachine = ({ source, destination, onRouteComplete }) => {
@@ -51,7 +52,7 @@ const MapRouting = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/getComplaintData');
+      const response = await apiRequest.get("/complaint/getComplaintData");
       const data = response.data;
 
       const filteredComplaints = data.filter(complaint => {
@@ -70,7 +71,9 @@ const MapRouting = () => {
 
   const fetchPotholes = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/getPotholeData');
+      
+      const response = await apiRequest.get("/model/getPotholeData");
+
       const data = response.data;
 
       const filteredPotholes = data.filter(pothole => {
@@ -160,9 +163,9 @@ const MapRouting = () => {
         ))}
       </MapContainer>
 
-      <div style={{ marginTop: '10px' }}>
-        <button onClick={handleCheckComplaints}>Check for Complaints</button>
-        <button onClick={handleCheckPotholes}>Check for Potholes</button>
+      <div className="buttonGroup" style={{ marginTop: '10px' }}>
+        <button className="btn" onClick={handleCheckComplaints}>Check for Complaints</button>
+        <button className="btn" onClick={handleCheckPotholes}>Check for Potholes</button>
       </div>
     </div>
   );
