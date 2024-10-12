@@ -1,4 +1,4 @@
-/* Set a height for the page and allow scrolling */
+
 .analysisPage {
     height: 100vh; /* Full viewport height */
     overflow-y: scroll; /* Enable vertical scrolling */
