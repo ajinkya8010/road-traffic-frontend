@@ -1,4 +1,4 @@
-.styled-input {
+/* .styled-input {
   width: 300px;
   padding: 10px;
   border: 2px solid #fabc3c;
@@ -58,3 +58,28 @@
   text-align: center;
   margin-top: 20px;
 }
+   */
+
+
+   .styled-input {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid #fabc3c;
+    border-radius: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .styled-input:focus {
+    border-color: #ffdc73;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 220, 115, 0.6);
+  }
+  
+  .loading {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #fabc3c;
+  }
