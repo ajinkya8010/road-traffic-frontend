@@ -12,6 +12,7 @@ import './mapRouting.css';
 
 // Routing component to display route on map
 const RoutingMachine = ({ source, destination, onRouteComplete }) => {
+  // const [showDirections, setShowDirections] = useState(false);
   const map = useMap();
 
   useEffect(() => {
@@ -30,13 +31,17 @@ const RoutingMachine = ({ source, destination, onRouteComplete }) => {
         const waypoints = route.coordinates.map(coord => L.latLng(coord.lat, coord.lng));
         onRouteComplete(waypoints);
       });
-
+      
       return () => map.removeControl(routingControl);
     }
   }, [source, destination, map, onRouteComplete]);
 
+  
   return null;
 };
+
+
+
 
 const MapRouting = () => {
   const [sourceAddress, setSourceAddress] = useState('');
@@ -49,6 +54,7 @@ const MapRouting = () => {
   const [showPotholes, setShowPotholes] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
+  
 
   const provider = new OpenStreetMapProvider();
 
@@ -66,8 +72,6 @@ const MapRouting = () => {
       alert("Source and destination required");
     } else {
       setLoading(true);
-      // setShowPothole(false);
-      // setShowComplaints(false);
       setPotholes([])
       setComplaints([])
      
@@ -79,12 +83,8 @@ const MapRouting = () => {
 
   
   const handleClearRoute = () => {
-    
       setPotholes([]);
       setComplaints([]);
-     
-      
-    
   };
 
   const fetchComplaints = async () => {
@@ -117,6 +117,7 @@ const MapRouting = () => {
     }
   };
 
+
   return (
     <div>
       {/* Address Input Fields */}
@@ -145,7 +146,7 @@ const MapRouting = () => {
         </div>
       </div>
 
-      <button className="btn" onClick={handleGetRoute}>Get Route</button>
+      <button className="btn top1" onClick={handleGetRoute}>Get Route</button>
       <button className="btn" onClick={handleClearRoute}>Clear Route</button>
 
       {loading && <div className="loading">Fetching route...</div>}
@@ -160,8 +161,8 @@ const MapRouting = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {/* Display Markers for Source and Destination */}
-        {sourceCoords && <Marker position={[sourceCoords.lat, sourceCoords.lng]} />}
-        {destinationCoords && <Marker position={[destinationCoords.lat, destinationCoords.lng]} />}
+        {sourceCoords && <Marker position={[sourceCoords.lat, sourceCoords.lng]}> <Popup> <p>{sourceAddress}</p> </Popup> </Marker>}
+        {destinationCoords && <Marker position={[destinationCoords.lat, destinationCoords.lng]}> <Popup>{destinationAddress}</Popup> </Marker>}
         
         {/* Routing between Source and Destination */}
         {sourceCoords && destinationCoords && (
@@ -222,3 +223,5 @@ const MapRouting = () => {
 };
 
 export default MapRouting;
+
+
