@@ -26,6 +26,7 @@ function Navbar() {
           <span>Traffic-Analysis</span>
         </a>
         <a href="/">Home</a>
+        <a href="/redeem">Redeem</a>
       </div>
       <div className="right">
         {currentUser ? (
