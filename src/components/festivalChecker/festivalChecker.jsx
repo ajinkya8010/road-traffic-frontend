@@ -29,8 +29,7 @@ const FestivalChecker = () => {
 
   return (
     <div>
-      <h2>Traffic Reason:</h2>
-      {trafficReason ? <p>{trafficReason}</p> : <p>No major events today.</p>}
+      {trafficReason ? <p>{trafficReason}</p> : <p></p>}
     </div>
   );
 };

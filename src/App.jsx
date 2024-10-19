@@ -7,6 +7,8 @@ import Pothole from "./routes/pothole/pothole";
 import Complaint from "./routes/complaint/complaint";
 import Analysis from "./routes/analysis/analysis";
 import Redeem from "./routes/redeem/redeem";
+import Event from "./routes/event/event";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -47,6 +49,10 @@ function App() {
           path:"/redeem",
           element:<Redeem/>
         },
+        {
+          path:"/event",
+          element:<Event/>
+        }
       ]
     }
   ]);

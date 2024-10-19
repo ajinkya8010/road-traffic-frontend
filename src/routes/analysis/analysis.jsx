@@ -7,7 +7,7 @@ const Analysis = () => {
   return (
     <div className="analysisPage scrollable">
       <MapRouting />
-      <FestivalChecker />
+      <FestivalChecker/>
     </div>
   );
 };
