@@ -38,6 +38,10 @@ const Pothole = () => {
     setError("");
   };
 
+  const handleInputChange = () => {
+    setMessage(''); 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -103,7 +107,7 @@ const Pothole = () => {
             className="location-input"
             placeholder="Enter Latitude"
             value={location.lat}
-            onChange={(e) => setLocation({ ...location, lat: e.target.value })}
+            onChange={(e) =>{setLocation({ ...location, lat: e.target.value }), handleInputChange();}}
             required
           />
           <input
@@ -111,7 +115,7 @@ const Pothole = () => {
             className="location-input"
             placeholder="Enter Longitude"
             value={location.lng}
-            onChange={(e) => setLocation({ ...location, lng: e.target.value })}
+            onChange={(e) => {setLocation({ ...location, lng: e.target.value }),handleInputChange();}}
             required
           />
         </div>

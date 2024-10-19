@@ -31,6 +31,11 @@ const Event = () => {
     }
   }, []);
 
+  
+  const handleInputChange = () => {
+    setMessage(''); 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,7 +44,7 @@ const Event = () => {
     const userId = currentUser._id;
 
     try {
-      const res = await apiRequest.post("/event/", {
+      await apiRequest.post("/event/", {
         userId,
         lng,
         lat,
@@ -67,7 +72,7 @@ const Event = () => {
             id="category"
             className="event-select"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => { setCategory(e.target.value); handleInputChange(); }}
             required
           >
             <option value="">Select Category</option>
@@ -85,7 +90,7 @@ const Event = () => {
             className="event-input"
             placeholder="Enter Latitude"
             value={location.lat}
-            onChange={(e) => setLocation({ ...location, lat: e.target.value })}
+            onChange={(e) => { setLocation({ ...location, lat: e.target.value }); handleInputChange(); }}
             required
           />
           <input
@@ -93,7 +98,7 @@ const Event = () => {
             className="event-input"
             placeholder="Enter Longitude"
             value={location.lng}
-            onChange={(e) => setLocation({ ...location, lng: e.target.value })}
+            onChange={(e) => { setLocation({ ...location, lng: e.target.value }); handleInputChange(); }}
             required
           />
         </div>
@@ -105,7 +110,7 @@ const Event = () => {
             id="startTime"
             className="event-input"
             value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
+            onChange={(e) => { setStartTime(e.target.value); handleInputChange(); }}
             required
           />
         </div>
@@ -117,7 +122,7 @@ const Event = () => {
             id="endTime"
             className="event-input"
             value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
+            onChange={(e) => { setEndTime(e.target.value); handleInputChange(); }}
             required
           />
         </div>
