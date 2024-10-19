@@ -1,0 +1,15 @@
+.pothole-display {
+    padding: 20px;
+  }
+  
+  .pothole-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers the cards */
+  }
+  
+  .pothole-grid .pothole-card {
+    flex: 1 1 calc(33.33% - 20px); /* Adjusts card width for 3 cards per row */
+    margin: 10px;
+  }
+  

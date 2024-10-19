@@ -39,6 +39,10 @@ const Complaint = () => {
     setError("");
   };
 
+  const handleInputChange = () => {
+    setMessage(''); 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -78,7 +82,7 @@ const Complaint = () => {
             type="file"
             id="image-upload"
             accept="image/*"
-            onChange={handleImageChange}
+            onChange= {handleImageChange}
             required
           />
         </div>
@@ -100,7 +104,7 @@ const Complaint = () => {
             id="category"
             className="complaint-select"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => { setCategory(e.target.value); handleInputChange();}}
             required
           >
             <option value="">Select Category</option>
@@ -122,7 +126,7 @@ const Complaint = () => {
             className="complaint-input"
             placeholder="Enter Latitude"
             value={location.lat}
-            onChange={(e) => setLocation({ ...location, lat: e.target.value })}
+            onChange={(e) =>{setLocation({ ...location, lat: e.target.value }),handleInputChange();}}
             required
           />
           <input
@@ -130,7 +134,7 @@ const Complaint = () => {
             className="complaint-input"
             placeholder="Enter Longitude"
             value={location.lng}
-            onChange={(e) => setLocation({ ...location, lng: e.target.value })}
+            onChange={(e) => { setLocation({ ...location, lng: e.target.value }), handleInputChange();}}
             required
           />
         </div>

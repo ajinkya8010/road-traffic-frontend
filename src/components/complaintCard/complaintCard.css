@@ -1,0 +1,39 @@
+.complaint-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    text-align: center;
+    background-color: #f9f9f9;
+    transition: transform 0.2s;
+  }
+  
+  .complaint-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .complaint-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+  
+  .complaint-info {
+    padding: 10px;
+  }
+  
+  .resolved-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+  
+  .resolved-button:hover {
+    background-color: #45a049;
+  }
+  

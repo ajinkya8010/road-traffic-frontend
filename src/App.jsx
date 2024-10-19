@@ -8,6 +8,10 @@ import Complaint from "./routes/complaint/complaint";
 import Analysis from "./routes/analysis/analysis";
 import Redeem from "./routes/redeem/redeem";
 import Event from "./routes/event/event";
+import AdminDashboard from "./routes/admin/adminDashboard";
+import PotholeDisplay from "./routes/potholeDisplay/potholeDisplay";
+import ComplaintDisplay from "./routes/complaintDisplay/complaintDisplay";
+import UserDisplay from "./routes/userDisplay/userDisplay";
 
 function App() {
   const router = createBrowserRouter([
@@ -54,7 +58,29 @@ function App() {
           element:<Event/>
         }
       ]
-    }
+    },
+    {
+      path: "/admin",
+      element: <RequireAuth requiredRole="admin" />, // Restrict this route to admins only
+      children: [
+        {
+          path: "/admin",
+          element: <AdminDashboard />,
+        },
+        {
+          path: "/admin/potholes",
+          element: <PotholeDisplay />,
+        },
+        {
+          path: "/admin/complaints",
+          element: <ComplaintDisplay />,
+        },
+        {
+          path:"/admin/users",
+          element: <UserDisplay/>
+        }
+      ],
+    },
   ]);
 
   return <RouterProvider router={router} />;

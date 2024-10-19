@@ -1,0 +1,43 @@
+.user-display {
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+  }
+  
+  .user-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .user-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 15px;
+    background-color: #fff;
+    flex: 0 0 calc(33.333% - 20px); /* Adjust the width to fit 3 cards in a row */
+    box-sizing: border-box;
+    transition: transform 0.2s;
+  }
+  
+  .user-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .make-admin-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .make-admin-button:hover {
+    background-color: #0056b3;
+  }
+  
