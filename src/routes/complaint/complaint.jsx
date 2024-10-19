@@ -110,6 +110,7 @@ const Complaint = () => {
             <option value="Illegal parking reducing road capacity">Illegal parking reducing road capacity</option>
             <option value="Pandal">Pandal</option>
             <option value="Landslide/Accident">Landslide/Accident</option>
+            <option value="Wrong side driving/riding">Wrong side driving/riding</option>
             <option value="Other">Other</option>
           </select>
         </div>

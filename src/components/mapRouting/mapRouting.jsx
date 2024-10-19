@@ -10,9 +10,9 @@ import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
 
+
 // Routing component to display route on map
 const RoutingMachine = ({ source, destination, onRouteComplete }) => {
-  // const [showDirections, setShowDirections] = useState(false);
   const map = useMap();
 
   useEffect(() => {
@@ -54,6 +54,8 @@ const MapRouting = () => {
   const [showPotholes, setShowPotholes] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [complaintCount, setComplaintCount] = useState(0);
+  const [potholeCount, setPotholeCount] = useState(0);
   
 
   const provider = new OpenStreetMapProvider();
@@ -74,7 +76,6 @@ const MapRouting = () => {
       setLoading(true);
       setPotholes([])
       setComplaints([])
-     
       setTimeout(() => {
         setLoading(false);
       }, 2000); // Simulate a delay for fetching the route
@@ -95,6 +96,7 @@ const MapRouting = () => {
         const complaintLatLng = L.latLng(parseFloat(complaint.latitude), parseFloat(complaint.longitude));
         return routePoints.some(routePoint => complaintLatLng.distanceTo(routePoint) <= 100);
       });
+      setComplaintCount(filteredComplaints.length);
       setComplaints(filteredComplaints);
       setShowComplaints(true);
     } catch (error) {
@@ -108,8 +110,9 @@ const MapRouting = () => {
       const data = response.data;
       const filteredPotholes = data.filter(pothole => {
         const potholeLatLng = L.latLng(parseFloat(pothole.latitude), parseFloat(pothole.longitude));
-        return routePoints.some(routePoint => potholeLatLng.distanceTo(routePoint) <= 100);
+        return routePoints.some(routePoint => potholeLatLng.distanceTo(routePoint) <= 50);
       });
+      setPotholeCount(filteredPotholes.length);
       setPotholes(filteredPotholes);
       setShowPotholes(true);
     } catch (error) {
@@ -217,6 +220,13 @@ const MapRouting = () => {
       <div className="buttonGroup" style={{ marginTop: '10px' }}>
         <button className="btn" onClick={fetchComplaints}>Check for Complaints</button>
         <button className="btn" onClick={fetchPotholes}>Check for Potholes</button>
+        <button className="btn" onClick={fetchPotholes}>Nearby schools/colleges</button>
+      </div>
+
+      <div className="reason-container">
+        <h2>Probable Traffic Reason:</h2>
+        <p>Number of Potholes on the route: {potholeCount}</p>
+        <p>Number of Complaints registered on the route: {complaintCount}</p>{}
       </div>
     </div>
   );

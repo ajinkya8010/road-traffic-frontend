@@ -5,7 +5,6 @@ import { AuthContext } from "../../context/authContext";
 import apiRequest from "../../lib/apiRequest";
 
 function Navbar() {
-  const [open, setOpen] = useState(false);
   const { currentUser,updateUser } = useContext(AuthContext); // Assuming you have a logout function in your context
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -42,29 +41,10 @@ function Navbar() {
             </a>
           </>
         )}
-        <div className="menuIcon">
-          <img
-            src="/menu.png"
-            alt=""
-            onClick={() => setOpen((prev) => !prev)}
-          />
-        </div>
-        <div className={open ? "menu active" : "menu"}>
-          <a href="/">Home</a>
-          {currentUser ? (
-            <a href="/" onClick={handleLogout}>
-              Logout
-            </a>
-          ) : (
-            <>
-              <a href="/login">Sign in</a>
-              <a href="/register">Sign up</a>
-            </>
-          )}
-        </div>
       </div>
     </nav>
   );
 }
 
 export default Navbar;
+

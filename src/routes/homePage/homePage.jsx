@@ -9,6 +9,8 @@ function HomePage() {
         <br />
         <a href="/complaint" className="btn">Register a Complaint</a>
         <br />
+        <a href="/event" className="btn">Register an Event</a>
+        <br />
         <a href="/analysis" className="btn">Analyze</a>
       </div>
       <div className="right">
