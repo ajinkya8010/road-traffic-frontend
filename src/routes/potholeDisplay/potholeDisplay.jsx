@@ -5,6 +5,7 @@ import apiRequest from "../../lib/apiRequest";
 
 const PotholeDisplay = () => {
   const [potholes, setPotholes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchPotholes = async () => {
     try {
@@ -18,6 +19,7 @@ const PotholeDisplay = () => {
           return { ...pothole, placeName };
         })
       );
+    
 
       setPotholes(potholesWithPlaceNames);
     } catch (error) {
@@ -60,11 +62,23 @@ const PotholeDisplay = () => {
     console.log(`Pothole ${id} resolved`);
   };
 
+  // Filter users based on search term
+  const filteredPotholes = potholes.filter(pothole => 
+    pothole.placeName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="pothole-display">
-      {potholes.length > 0 ? (
+    <input
+        type="text"
+        placeholder="Search Potholes by location...."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-bar"
+      />
+      {filteredPotholes.length > 0 ? (
         <div className="pothole-grid">
-          {potholes.map((pothole) => (
+          {filteredPotholes.map((pothole) => (
             <PotholeCard
               key={pothole._id}
               imageSrc={pothole.src}
