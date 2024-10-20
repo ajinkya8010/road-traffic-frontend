@@ -10,9 +10,45 @@ const PotholeDisplay = () => {
     try {
       const response = await apiRequest.get("/model/getPotholeData");
       const data = response.data;
-      setPotholes(data);
+
+      // Fetch the place names for each pothole
+      const potholesWithPlaceNames = await Promise.all(
+        data.map(async (pothole) => {
+          const placeName = await getPlaceName(pothole.latitude, pothole.longitude);
+          return { ...pothole, placeName };
+        })
+      );
+
+      setPotholes(potholesWithPlaceNames);
     } catch (error) {
       console.error("Error fetching potholes:", error);
+    }
+  };
+
+  const getPlaceName = async (latitude, longitude) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+  
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      const { neighbourhood, village, city, postcode ,road} = data.address;
+      let placeDetails = '';
+  
+      // Create a string with the relevant place details if they exist
+      if (neighbourhood) placeDetails += `${neighbourhood}, `;
+      if (village) placeDetails += `${village}, `;
+      if (road) placeDetails+=`${road}, `;
+      if (city) placeDetails += `${city}, `;
+      if (postcode) placeDetails += `${postcode}`;
+  
+      // Remove the trailing comma and space if present
+      placeDetails = placeDetails.trim().replace(/,\s*$/, '');
+  
+      return placeDetails || 'Unknown location';
+    } catch (error) {
+      console.error('Error fetching place name:', error);
+      return 'Unknown location';
     }
   };
 
@@ -34,6 +70,7 @@ const PotholeDisplay = () => {
               imageSrc={pothole.src}
               longitude={pothole.longitude}
               latitude={pothole.latitude}
+              placeName={pothole.placeName}
               onResolved={() => handleResolved(pothole._id)}
             />
           ))}
