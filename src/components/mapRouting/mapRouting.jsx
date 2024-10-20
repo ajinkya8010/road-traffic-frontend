@@ -50,6 +50,8 @@ const MapRouting = () => {
   const [destinationCoords, setDestinationCoords] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [potholes, setPotholes] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [showEvents, setShowEvents] = useState(false);
   const [showComplaints, setShowComplaints] = useState(false);
   const [showPotholes, setShowPotholes] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
@@ -120,11 +122,41 @@ const MapRouting = () => {
     }
   };
 
+  const fetchEvents = async() =>{
+    try {
+      const response = await apiRequest.get("/event/getEventData"); 
+      const data = response.data;
+  
+      // Get the current date and time
+      const now = new Date();
+  
+      // Filter events to show only those happening today and during the current time
+      const filteredEvents = data.filter(event => {
+        const eventStartDate = new Date(event.startTime);
+        const eventEndDate = new Date(event.endTime);
+        const eventLatLng = L.latLng(parseFloat(event.latitude), parseFloat(event.longitude));
+        const isOnRoute =  routePoints.some(routePoint => eventLatLng.distanceTo(routePoint) <= 50);
+        // Check if the event is happening today and falls within the current time
+        return (
+          eventStartDate <= now &&
+          eventEndDate >= now &&
+          eventStartDate.toDateString() === now.toDateString() &&
+          isOnRoute
+        );
+      });
+  
+      setEvents(filteredEvents);
+      setShowEvents(true);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  }
+
 
   return (
     <div>
       {/* Address Input Fields */}
-      <div className="address-inputs" style={{ marginBottom: '10px' }}>
+      <div className="address-inputs">
         <div>
           <label>Source </label>
           <input
@@ -215,11 +247,31 @@ const MapRouting = () => {
             </Popup>
           </Marker>
         ))}
+
+        {showEvents && events.map((event, index) => (
+          <Marker
+            key={index}
+            position={[parseFloat(event.latitude), parseFloat(event.longitude)]}
+            icon={L.ExtraMarkers.icon({
+              icon: 'fa-circle',
+              markerColor: 'orange',
+              prefix: 'fa'
+            })}
+          >
+            <Popup>
+              <div>
+                <p>{event.category}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+
       </MapContainer>
 
       <div className="buttonGroup" style={{ marginTop: '10px' }}>
         <button className="btn" onClick={fetchComplaints}>Check for Complaints</button>
         <button className="btn" onClick={fetchPotholes}>Check for Potholes</button>
+        <button className="btn" onClick={fetchEvents}>Check for Events</button>
         <button className="btn" onClick={fetchPotholes}>Nearby schools/colleges</button>
       </div>
 
