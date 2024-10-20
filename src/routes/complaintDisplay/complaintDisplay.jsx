@@ -5,6 +5,7 @@ import apiRequest from "../../lib/apiRequest";
 
 const ComplaintDisplay = () => {
   const [complaints, setComplaints] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchComplaints = async () => {
     try {
@@ -59,11 +60,24 @@ const ComplaintDisplay = () => {
     console.log(`Complaint ${id} resolved`);
   };
 
+  // Filter users based on search term
+  const filteredComplaints = complaints.filter(complaint => 
+    complaint.placeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    complaint.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="complaint-display">
-      {complaints.length > 0 ? (
+    <input
+        type="text"
+        placeholder="Search Potholes by location...."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-bar"
+      />
+      {filteredComplaints.length > 0 ? (
         <div className="complaint-grid">
-          {complaints.map((complaint) => (
+          {filteredComplaints.map((complaint) => (
             <ComplaintCard
               key={complaint._id}
               imageSrc={complaint.src}
