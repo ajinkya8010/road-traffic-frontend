@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -11,10 +11,11 @@ import 'leaflet-extra-markers';
 import './mapRouting.css';
 
 
+
 // Routing component to display route on map
 const RoutingMachine = ({ source, destination, onRouteComplete }) => {
   const map = useMap();
-
+  
   useEffect(() => {
     if (source && destination) {
       const routingControl = L.Routing.control({
@@ -58,30 +59,49 @@ const MapRouting = () => {
   const [loading, setLoading] = useState(false);
   const [complaintCount, setComplaintCount] = useState(0);
   const [potholeCount, setPotholeCount] = useState(0);
-  
+
+
+
 
   const provider = new OpenStreetMapProvider();
 
-  const handleAddressSearch = async (address, setCoords) => {
+  // const handleAddressSearch = async (address, setCoords) => {
+  //   const results = await provider.search({ query: address });
+  //   if (results.length > 0) {
+  //     const { x: lng, y: lat } = results[0];
+  //     setCoords({ lat, lng });
+  //   }
+  // };
+
+  const handleAddressSearch = async (address) => {
     const results = await provider.search({ query: address });
     if (results.length > 0) {
       const { x: lng, y: lat } = results[0];
-      setCoords({ lat, lng });
+      return { lat, lng }; 
     }
+    return null; 
   };
 
-  const handleGetRoute = () => {
-    if (!sourceCoords && !destinationCoords) {
-      console.log()
+  const handleGetRoute = async() => {
+    setLoading(true);
+    const [sourceCoords, destinationCoords] = await Promise.all([
+      handleAddressSearch(sourceAddress),
+      handleAddressSearch(destinationAddress)
+    ]);
+    if (!sourceCoords || !destinationCoords) {
+      console.log(sourceCoords+" "+destinationCoords);
       alert("Source and destination required");
-    } else {
-      setLoading(true);
+      setLoading(false);
+      return;
+    } 
+    setSourceCoords(sourceCoords);
+    setDestinationCoords(destinationCoords);
       setPotholes([])
       setComplaints([])
       setTimeout(() => {
         setLoading(false);
-      }, 2000); // Simulate a delay for fetching the route
-    }
+      }, 2000); 
+    
   };
 
   
@@ -153,6 +173,7 @@ const MapRouting = () => {
   }
 
 
+
   return (
     <div>
       {/* Address Input Fields */}
@@ -163,8 +184,8 @@ const MapRouting = () => {
             className="styled-input"
             type="text"
             value={sourceAddress}
-            onChange={(e) => setSourceAddress(e.target.value)}
-            onBlur={() => handleAddressSearch(sourceAddress, setSourceCoords)}
+            onChange={(e) => {setSourceAddress(e.target.value); handleClearRoute();}}
+            //onBlur={() => handleAddressSearch(sourceAddress, setSourceCoords)}
             placeholder="Enter source address"
           />
         </div>
@@ -174,12 +195,14 @@ const MapRouting = () => {
             className="styled-input"
             type="text"
             value={destinationAddress}
-            onChange={(e) => setDestinationAddress(e.target.value)}
-            onBlur={() => handleAddressSearch(destinationAddress, setDestinationCoords)}
+            onChange={(e) => {setDestinationAddress(e.target.value); handleClearRoute();}}
+            //onBlur={() => handleAddressSearch(destinationAddress, setDestinationCoords)}
             placeholder="Enter destination address"
           />
         </div>
       </div>
+
+
 
       <button className="btn top1" onClick={handleGetRoute}>Get Route</button>
       <button className="btn" onClick={handleClearRoute}>Clear Route</button>
@@ -285,5 +308,4 @@ const MapRouting = () => {
 };
 
 export default MapRouting;
-
 
