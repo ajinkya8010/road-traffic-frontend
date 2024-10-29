@@ -9,6 +9,8 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
+import axios from 'axios';
+
 
 
 
@@ -31,8 +33,9 @@ const RoutingMachine = ({ source, destination, onRouteComplete }) => {
         const route = e.routes[0];
         const waypoints = route.coordinates.map(coord => L.latLng(coord.lat, coord.lng));
         onRouteComplete(waypoints);
+        console.log("the waypoints are as follows ! ",waypoints)
       });
-      
+       
       return () => map.removeControl(routingControl);
     }
   }, [source, destination, map, onRouteComplete]);
@@ -59,19 +62,12 @@ const MapRouting = () => {
   const [loading, setLoading] = useState(false);
   const [complaintCount, setComplaintCount] = useState(0);
   const [potholeCount, setPotholeCount] = useState(0);
+  const [nearbyPlaces, setNearbyPlaces] = useState([]);
 
 
 
 
   const provider = new OpenStreetMapProvider();
-
-  // const handleAddressSearch = async (address, setCoords) => {
-  //   const results = await provider.search({ query: address });
-  //   if (results.length > 0) {
-  //     const { x: lng, y: lat } = results[0];
-  //     setCoords({ lat, lng });
-  //   }
-  // };
 
   const handleAddressSearch = async (address) => {
     const results = await provider.search({ query: address });
@@ -108,6 +104,7 @@ const MapRouting = () => {
   const handleClearRoute = () => {
       setPotholes([]);
       setComplaints([]);
+      setNearbyPlaces([]);
   };
 
   const fetchComplaints = async () => {
@@ -141,6 +138,127 @@ const MapRouting = () => {
       console.error("Error fetching potholes:", error);
     }
   };
+
+//   const fetchNearbyPlace = async (waypoints) => {
+//     if (!waypoints || waypoints.length < 2) return alert("Please set a valid route with multiple waypoints.");
+
+//     try {
+//         console.log("Fetching nearby places along the route...");
+
+//         let allNearbyPlaces = [];
+
+//         for (let i = 0; i < waypoints.length - 1; i++) {
+//             const start = waypoints[i];
+//             const end = waypoints[i + 1];
+//             const distanceBetween = calculateDistance(start, end); // Function to calculate distance between two points
+
+//             let currentPoint = { ...start };
+//             let traveledDistance = 0;
+
+//             // Generate points every 30 meters
+//             while (traveledDistance < distanceBetween) {
+//                 const response = await apiRequest.post("/nearby/", {
+//                     params: {
+//                         location: `${currentPoint.lat},${currentPoint.lng}`,
+//                         radius: 50, // specify desired radius in meters
+//                         keyword: 'school college university institute technology',
+//                     }
+//                 });
+
+//                 const places = response.data.results.map(place => ({
+//                     name: place.name,
+//                     location: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+//                 }));
+
+//                 allNearbyPlaces.push(...places);
+
+//                 // Move 30 meters closer to the next waypoint
+//                 currentPoint = moveTowards(start, end, 80); // Function to move 30 meters towards the next waypoint
+//                 traveledDistance += 80;
+//             }
+//         }
+
+//         console.log("All nearby places within constraints are:", allNearbyPlaces);
+
+//         setNearbyPlaces(allNearbyPlaces);
+//     } catch (error) {
+//         console.error("Error fetching nearby places:", error);
+//     }
+// };
+
+// // Helper function to calculate the distance between two coordinates
+// function calculateDistance(point1, point2) {
+//     // Use Haversine formula or another method to calculate the distance in meters
+//     const R = 6371000; // Radius of Earth in meters
+//     const lat1 = (point1.lat * Math.PI) / 180;
+//     const lat2 = (point2.lat * Math.PI) / 180;
+//     const deltaLat = ((point2.lat - point1.lat) * Math.PI) / 180;
+//     const deltaLng = ((point2.lng - point1.lng) * Math.PI) / 180;
+
+//     const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+//               Math.cos(lat1) * Math.cos(lat2) *
+//               Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+
+//     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+//     return R * c; // Distance in meters
+// }
+
+// // Helper function to move a point a certain distance (in meters) towards another point
+// function moveTowards(start, end, distance) {
+//     const totalDistance = calculateDistance(start, end);
+//     const ratio = distance / totalDistance;
+
+//     const newLat = start.lat + (end.lat - start.lat) * ratio;
+//     const newLng = start.lng + (end.lng - start.lng) * ratio;
+
+//     return { lat: newLat, lng: newLng };
+// }
+
+const fetchNearbyPlace = async () => {
+  if (!sourceCoords) return alert("Please set source coordinates.");
+
+  try {
+      console.log("You are about to make a backend call from the frontend!");
+
+      let allPlaces = [];
+      let nextPageToken = null;
+
+      do {
+          const response = await apiRequest.post("/nearby/", {
+              params: {
+                  location: `${sourceCoords.lat},${sourceCoords.lng}`,
+                  radius: 5000,
+                  keyword: 'institute school technology university college',
+                  pagetoken: nextPageToken, // Use next_page_token if it exists
+              }
+          });
+
+          if (response.data.results) {
+              allPlaces = [...allPlaces, ...response.data.results];
+              nextPageToken = response.data.next_page_token;
+          } else {
+              nextPageToken = null; // If no more results, break out of loop
+          }
+
+          // Wait for 2 seconds if nextPageToken is available
+          if (nextPageToken) {
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+          }
+      } while (nextPageToken);
+
+      const places = allPlaces.map(place => ({
+          name: place.name,
+          location: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+      }));
+
+      console.log("All nearby places within constraints:", places);
+      setNearbyPlaces(places);
+  } catch (error) {
+      console.error("Error fetching nearby places:", error);
+  }
+};
+
 
   const fetchEvents = async() =>{
     try {
@@ -288,6 +406,12 @@ const MapRouting = () => {
             </Popup>
           </Marker>
         ))}
+        
+        {nearbyPlaces.map((place, index) => (
+          <Marker key={index} position={[place.location.lat, place.location.lng]}>
+            <Popup>{place.name}</Popup>
+          </Marker>
+        ))}
 
       </MapContainer>
 
@@ -295,7 +419,7 @@ const MapRouting = () => {
         <button className="btn" onClick={fetchComplaints}>Check for Complaints</button>
         <button className="btn" onClick={fetchPotholes}>Check for Potholes</button>
         <button className="btn" onClick={fetchEvents}>Check for Events</button>
-        <button className="btn" onClick={fetchPotholes}>Nearby schools/colleges</button>
+        <button className="btn" onClick={fetchNearbyPlace}>Nearby schools/colleges</button>
       </div>
 
       <div className="reason-container">
