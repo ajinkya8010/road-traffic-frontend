@@ -9,12 +9,10 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
-import axios from 'axios';
 
 
 
 
-// Routing component to display route on map
 const RoutingMachine = ({ source, destination, onRouteComplete }) => {
   const map = useMap();
   
@@ -33,7 +31,6 @@ const RoutingMachine = ({ source, destination, onRouteComplete }) => {
         const route = e.routes[0];
         const waypoints = route.coordinates.map(coord => L.latLng(coord.lat, coord.lng));
         onRouteComplete(waypoints);
-        console.log("the waypoints are as follows ! ",waypoints)
       });
        
       return () => map.removeControl(routingControl);
@@ -139,81 +136,6 @@ const MapRouting = () => {
     }
   };
 
-//   const fetchNearbyPlace = async (waypoints) => {
-//     if (!waypoints || waypoints.length < 2) return alert("Please set a valid route with multiple waypoints.");
-
-//     try {
-//         console.log("Fetching nearby places along the route...");
-
-//         let allNearbyPlaces = [];
-
-//         for (let i = 0; i < waypoints.length - 1; i++) {
-//             const start = waypoints[i];
-//             const end = waypoints[i + 1];
-//             const distanceBetween = calculateDistance(start, end); // Function to calculate distance between two points
-
-//             let currentPoint = { ...start };
-//             let traveledDistance = 0;
-
-//             // Generate points every 30 meters
-//             while (traveledDistance < distanceBetween) {
-//                 const response = await apiRequest.post("/nearby/", {
-//                     params: {
-//                         location: `${currentPoint.lat},${currentPoint.lng}`,
-//                         radius: 50, // specify desired radius in meters
-//                         keyword: 'school college university institute technology',
-//                     }
-//                 });
-
-//                 const places = response.data.results.map(place => ({
-//                     name: place.name,
-//                     location: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
-//                 }));
-
-//                 allNearbyPlaces.push(...places);
-
-//                 // Move 30 meters closer to the next waypoint
-//                 currentPoint = moveTowards(start, end, 80); // Function to move 30 meters towards the next waypoint
-//                 traveledDistance += 80;
-//             }
-//         }
-
-//         console.log("All nearby places within constraints are:", allNearbyPlaces);
-
-//         setNearbyPlaces(allNearbyPlaces);
-//     } catch (error) {
-//         console.error("Error fetching nearby places:", error);
-//     }
-// };
-
-// // Helper function to calculate the distance between two coordinates
-// function calculateDistance(point1, point2) {
-//     // Use Haversine formula or another method to calculate the distance in meters
-//     const R = 6371000; // Radius of Earth in meters
-//     const lat1 = (point1.lat * Math.PI) / 180;
-//     const lat2 = (point2.lat * Math.PI) / 180;
-//     const deltaLat = ((point2.lat - point1.lat) * Math.PI) / 180;
-//     const deltaLng = ((point2.lng - point1.lng) * Math.PI) / 180;
-
-//     const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-//               Math.cos(lat1) * Math.cos(lat2) *
-//               Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-
-//     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-//     return R * c; // Distance in meters
-// }
-
-// // Helper function to move a point a certain distance (in meters) towards another point
-// function moveTowards(start, end, distance) {
-//     const totalDistance = calculateDistance(start, end);
-//     const ratio = distance / totalDistance;
-
-//     const newLat = start.lat + (end.lat - start.lat) * ratio;
-//     const newLng = start.lng + (end.lng - start.lng) * ratio;
-
-//     return { lat: newLat, lng: newLng };
-// }
 
 const fetchNearbyPlace = async () => {
   if (!sourceCoords) return alert("Please set source coordinates.");
@@ -227,8 +149,7 @@ const fetchNearbyPlace = async () => {
       do {
           const response = await apiRequest.post("/nearby/", {
               params: {
-                  location: `${sourceCoords.lat},${sourceCoords.lng}`,
-                  radius: 5000,
+                  routePoints: routePoints,
                   keyword: 'institute school technology university college',
                   pagetoken: nextPageToken, // Use next_page_token if it exists
               }
@@ -265,16 +186,14 @@ const fetchNearbyPlace = async () => {
       const response = await apiRequest.get("/event/getEventData"); 
       const data = response.data;
   
-      // Get the current date and time
+
       const now = new Date();
-  
-      // Filter events to show only those happening today and during the current time
-      const filteredEvents = data.filter(event => {
+        const filteredEvents = data.filter(event => {
         const eventStartDate = new Date(event.startTime);
         const eventEndDate = new Date(event.endTime);
         const eventLatLng = L.latLng(parseFloat(event.latitude), parseFloat(event.longitude));
         const isOnRoute =  routePoints.some(routePoint => eventLatLng.distanceTo(routePoint) <= 50);
-        // Check if the event is happening today and falls within the current time
+
         return (
           eventStartDate <= now &&
           eventEndDate >= now &&
@@ -303,7 +222,6 @@ const fetchNearbyPlace = async () => {
             type="text"
             value={sourceAddress}
             onChange={(e) => {setSourceAddress(e.target.value); handleClearRoute();}}
-            //onBlur={() => handleAddressSearch(sourceAddress, setSourceCoords)}
             placeholder="Enter source address"
           />
         </div>
@@ -314,7 +232,6 @@ const fetchNearbyPlace = async () => {
             type="text"
             value={destinationAddress}
             onChange={(e) => {setDestinationAddress(e.target.value); handleClearRoute();}}
-            //onBlur={() => handleAddressSearch(destinationAddress, setDestinationCoords)}
             placeholder="Enter destination address"
           />
         </div>

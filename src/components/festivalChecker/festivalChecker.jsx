@@ -18,7 +18,6 @@ const FestivalChecker = () => {
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
-    console.log("Hi");
     console.log(festivals);
     const festivalToday = festivals.find(festival => festival.date.iso === today);
     
