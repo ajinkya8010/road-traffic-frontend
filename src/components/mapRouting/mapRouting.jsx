@@ -67,13 +67,13 @@ const MapRouting = () => {
   const destinationInputRef = useRef(null);
   const sourceAutocomplete = useRef(null);
   const destinationAutocomplete = useRef(null);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
     // Load Google Maps JavaScript API
     const loadGoogleMapsScript = () => {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAs6xHZ_UEGk5IFF2V620vsgnMOoOrqepY
-&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
       script.async = true;
       script.defer = true;
       script.onload = initializeAutocomplete;
@@ -255,7 +255,7 @@ const fetchNearbyPlace = async () => {
 
   return (
     <div>
-      {/* Address Input Fields */}ś
+      {/* Address Input Fields */}
 
       <div className="address-inputs">
         <div>
