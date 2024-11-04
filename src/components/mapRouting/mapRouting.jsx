@@ -1,11 +1,10 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
 import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
 import 'leaflet-extra-markers/dist/js/leaflet.extra-markers.js';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
@@ -60,41 +59,84 @@ const MapRouting = () => {
   const [complaintCount, setComplaintCount] = useState(0);
   const [potholeCount, setPotholeCount] = useState(0);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  const [isClicked, setIsClicked] = useState(false);
 
 
 
+  const sourceInputRef = useRef(null);
+  const destinationInputRef = useRef(null);
+  const sourceAutocomplete = useRef(null);
+  const destinationAutocomplete = useRef(null);
 
-  const provider = new OpenStreetMapProvider();
+  useEffect(() => {
+    // Load Google Maps JavaScript API
+    const loadGoogleMapsScript = () => {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAs6xHZ_UEGk5IFF2V620vsgnMOoOrqepY
+&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeAutocomplete;
+      document.body.appendChild(script);
+    };
 
-  const handleAddressSearch = async (address) => {
-    const results = await provider.search({ query: address });
-    if (results.length > 0) {
-      const { x: lng, y: lat } = results[0];
-      return { lat, lng }; 
-    }
-    return null; 
+    loadGoogleMapsScript();
+  }, []);
+
+  const initializeAutocomplete = () => {
+    // Initialize Google Maps Autocomplete for source input
+    sourceAutocomplete.current = new window.google.maps.places.Autocomplete(
+      sourceInputRef.current,
+      { types: ['geocode'] }
+    );
+
+    // Initialize Google Maps Autocomplete for destination input
+    destinationAutocomplete.current = new window.google.maps.places.Autocomplete(
+      destinationInputRef.current,
+      { types: ['geocode'] }
+    );
+
+    // Add place_changed event listeners
+    sourceAutocomplete.current.addListener('place_changed', () => {
+      const place = sourceAutocomplete.current.getPlace();
+      if (place.geometry) {
+        setSourceAddress(place.formatted_address);
+        setSourceCoords({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        });
+      }
+    });
+
+    destinationAutocomplete.current.addListener('place_changed', () => {
+      const place = destinationAutocomplete.current.getPlace();
+      if (place.geometry) {
+        setDestinationAddress(place.formatted_address);
+        setDestinationCoords({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        });
+      }
+    });
   };
 
-  const handleGetRoute = async() => {
+
+
+
+  const handleGetRoute = async () => {
     setLoading(true);
-    const [sourceCoords, destinationCoords] = await Promise.all([
-      handleAddressSearch(sourceAddress),
-      handleAddressSearch(destinationAddress)
-    ]);
     if (!sourceCoords || !destinationCoords) {
-      console.log(sourceCoords+" "+destinationCoords);
-      alert("Source and destination required");
+      alert("Please select valid source and destination addresses from the suggestions");
       setLoading(false);
       return;
-    } 
-    setSourceCoords(sourceCoords);
-    setDestinationCoords(destinationCoords);
-      setPotholes([])
-      setComplaints([])
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000); 
-    
+    }
+    setPotholes([]);
+    setComplaints([]);
+    setNearbyPlaces([]);
+    setIsClicked(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   };
 
   
@@ -213,25 +255,28 @@ const fetchNearbyPlace = async () => {
 
   return (
     <div>
-      {/* Address Input Fields */}
+      {/* Address Input Fields */}ś
+
       <div className="address-inputs">
         <div>
           <label>Source </label>
           <input
+            ref={sourceInputRef}
             className="styled-input"
             type="text"
             value={sourceAddress}
-            onChange={(e) => {setSourceAddress(e.target.value); handleClearRoute();}}
+            onChange={(e) => {setSourceAddress(e.target.value); setIsClicked(false); setPotholes([]);setComplaints([]); setNearbyPlaces([]);}}
             placeholder="Enter source address"
           />
         </div>
         <div>
           <label>Destination </label>
           <input
+            ref={destinationInputRef}
             className="styled-input"
             type="text"
             value={destinationAddress}
-            onChange={(e) => {setDestinationAddress(e.target.value); handleClearRoute();}}
+            onChange={(e) => {setDestinationAddress(e.target.value); setIsClicked(false); setPotholes([]); setComplaints([]); setNearbyPlaces([]);}}
             placeholder="Enter destination address"
           />
         </div>
@@ -258,7 +303,7 @@ const fetchNearbyPlace = async () => {
         {destinationCoords && <Marker position={[destinationCoords.lat, destinationCoords.lng]}> <Popup>{destinationAddress}</Popup> </Marker>}
         
         {/* Routing between Source and Destination */}
-        {sourceCoords && destinationCoords && (
+        {sourceCoords && destinationCoords && isClicked && (
           <RoutingMachine 
             source={sourceCoords} 
             destination={destinationCoords} 
