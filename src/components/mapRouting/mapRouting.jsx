@@ -54,10 +54,11 @@ const MapRouting = () => {
   const [showEvents, setShowEvents] = useState(false);
   const [showComplaints, setShowComplaints] = useState(false);
   const [showPotholes, setShowPotholes] = useState(false);
+  const [showNearByPlaces, setShowNearByPlaces] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [complaintCount, setComplaintCount] = useState(0);
-  const [potholeCount, setPotholeCount] = useState(0);
+  // const [complaintCount, setComplaintCount] = useState(0);
+  // const [potholeCount, setPotholeCount] = useState(0);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -121,8 +122,6 @@ const MapRouting = () => {
   };
 
 
-
-
   const handleGetRoute = async () => {
     setLoading(true);
     if (!sourceCoords || !destinationCoords) {
@@ -130,20 +129,25 @@ const MapRouting = () => {
       setLoading(false);
       return;
     }
-    setPotholes([]);
-    setComplaints([]);
-    setNearbyPlaces([]);
-    setIsClicked(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    setIsClicked(true); 
   };
+  
+  useEffect(() => {
+    if (isClicked && routePoints.length > 0) {
+      (async () => {
+        await Promise.all([fetchComplaints(), fetchPotholes(), fetchNearbyPlace(), fetchEvents()]);
+        setLoading(false);
+      })();
+    }
+  }, [routePoints, isClicked]);
+  
 
   
   const handleClearRoute = () => {
-      setPotholes([]);
-      setComplaints([]);
-      setNearbyPlaces([]);
+      setShowComplaints(false);
+      setShowPotholes(false);
+      setShowEvents(false);
+      setShowNearByPlaces(false);
   };
 
   const fetchComplaints = async () => {
@@ -154,9 +158,8 @@ const MapRouting = () => {
         const complaintLatLng = L.latLng(parseFloat(complaint.latitude), parseFloat(complaint.longitude));
         return routePoints.some(routePoint => complaintLatLng.distanceTo(routePoint) <= 100);
       });
-      setComplaintCount(filteredComplaints.length);
       setComplaints(filteredComplaints);
-      setShowComplaints(true);
+      //setShowComplaints(true);
     } catch (error) {
       console.error("Error fetching complaints:", error);
     }
@@ -170,9 +173,8 @@ const MapRouting = () => {
         const potholeLatLng = L.latLng(parseFloat(pothole.latitude), parseFloat(pothole.longitude));
         return routePoints.some(routePoint => potholeLatLng.distanceTo(routePoint) <= 50);
       });
-      setPotholeCount(filteredPotholes.length);
       setPotholes(filteredPotholes);
-      setShowPotholes(true);
+      //setShowPotholes(true);
     } catch (error) {
       console.error("Error fetching potholes:", error);
     }
@@ -214,9 +216,8 @@ const fetchNearbyPlace = async () => {
           name: place.name,
           location: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
       }));
-
-      console.log("All nearby places within constraints:", places);
       setNearbyPlaces(places);
+      //setShowNearByPlaces(true);
   } catch (error) {
       console.error("Error fetching nearby places:", error);
   }
@@ -245,7 +246,7 @@ const fetchNearbyPlace = async () => {
       });
   
       setEvents(filteredEvents);
-      setShowEvents(true);
+      //setShowEvents(true);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
@@ -369,7 +370,7 @@ const fetchNearbyPlace = async () => {
           </Marker>
         ))}
         
-        {nearbyPlaces.map((place, index) => (
+        {showNearByPlaces && nearbyPlaces.map((place, index) => (
           <Marker key={index} position={[place.location.lat, place.location.lng]}>
             <Popup>{place.name}</Popup>
           </Marker>
@@ -378,16 +379,19 @@ const fetchNearbyPlace = async () => {
       </MapContainer>
 
       <div className="buttonGroup" style={{ marginTop: '10px' }}>
-        <button className="btn" onClick={fetchComplaints}>Check for Complaints</button>
-        <button className="btn" onClick={fetchPotholes}>Check for Potholes</button>
-        <button className="btn" onClick={fetchEvents}>Check for Events</button>
-        <button className="btn" onClick={fetchNearbyPlace}>Nearby schools/colleges</button>
+        <button className="btn" onClick={() => setShowComplaints(true)}>Check for Complaints</button>
+        <button className="btn" onClick={() => setShowPotholes(true)}>Check for Potholes</button>
+        <button className="btn" onClick={() => setShowEvents(true)}>Check for Events</button>
+        <button className="btn" onClick={() => setShowNearByPlaces(true)}>Nearby schools/colleges</button>
       </div>
+
 
       <div className="reason-container">
         <h2>Probable Traffic Reason:</h2>
-        <p>Number of Potholes on the route: {potholeCount}</p>
-        <p>Number of Complaints registered on the route: {complaintCount}</p>{}
+        <p>1. Number of Potholes on the route: {potholes.length}</p>
+        <p>2. Number of Complaints registered on the route: {complaints.length}</p>
+        <p>3. Number of Events registered on the route: {complaints.length}</p>
+        <p>4. Number of Schools & College with opening & closing time soon: {nearbyPlaces.length}</p>
       </div>
     </div>
   );
