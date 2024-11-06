@@ -8,6 +8,7 @@ import 'leaflet-extra-markers/dist/js/leaflet.extra-markers.js';
 import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 
 
@@ -57,8 +58,6 @@ const MapRouting = () => {
   const [showNearByPlaces, setShowNearByPlaces] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [complaintCount, setComplaintCount] = useState(0);
-  // const [potholeCount, setPotholeCount] = useState(0);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -122,13 +121,39 @@ const MapRouting = () => {
   };
 
 
+  const provider = new OpenStreetMapProvider();
+
+  const handleAddressSearch = async (address) => {
+    const results = await provider.search({ query: address });
+    if (results.length > 0) {
+      const { x: lng, y: lat } = results[0];
+      return { lat, lng }; 
+    }
+    return null; 
+  };
+
+
+
   const handleGetRoute = async () => {
     setLoading(true);
+    // if (!sourceCoords || !destinationCoords) {
+    //   alert("Please select valid source and destination addresses from the suggestions");
+    //   setLoading(false);
+    //   return;
+    // }
+    const [sourceCoords, destinationCoords] = await Promise.all([
+      handleAddressSearch(sourceAddress),
+      handleAddressSearch(destinationAddress)
+    ]);
     if (!sourceCoords || !destinationCoords) {
-      alert("Please select valid source and destination addresses from the suggestions");
+      console.log(sourceCoords+" "+destinationCoords);
+      alert("Source and destination required");
       setLoading(false);
       return;
-    }
+    } 
+    setSourceCoords(sourceCoords);
+    setDestinationCoords(destinationCoords);
+    //144-156 to be removed later
     setIsClicked(true); 
   };
   
@@ -262,6 +287,30 @@ const fetchNearbyPlace = async () => {
         <div>
           <label>Source </label>
           <input
+            className="styled-input"
+            type="text"
+            value={sourceAddress}
+            onChange={(e) => {setSourceAddress(e.target.value); handleClearRoute();}}
+            placeholder="Enter source address"
+          />
+        </div>
+        <div>
+          <label>Destination </label>
+          <input
+            className="styled-input"
+            type="text"
+            value={destinationAddress}
+            onChange={(e) => {setDestinationAddress(e.target.value); handleClearRoute();}}
+            placeholder="Enter destination address"
+          />
+        </div>
+      </div>
+
+
+      {/* <div className="address-inputs">
+        <div>
+          <label>Source </label>
+          <input
             ref={sourceInputRef}
             className="styled-input"
             type="text"
@@ -281,7 +330,7 @@ const fetchNearbyPlace = async () => {
             placeholder="Enter destination address"
           />
         </div>
-      </div>
+      </div> */}
 
 
 
@@ -382,7 +431,7 @@ const fetchNearbyPlace = async () => {
         <button className="btn" onClick={() => setShowComplaints(true)}>Check for Complaints</button>
         <button className="btn" onClick={() => setShowPotholes(true)}>Check for Potholes</button>
         <button className="btn" onClick={() => setShowEvents(true)}>Check for Events</button>
-        <button className="btn" onClick={() => setShowNearByPlaces(true)}>Nearby schools/colleges</button>
+        {/*<button className="btn" onClick={() => setShowNearByPlaces(true)}>Nearby schools/colleges</button>*/}
       </div>
 
 
