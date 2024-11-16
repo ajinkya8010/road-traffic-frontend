@@ -8,6 +8,9 @@ import 'leaflet-extra-markers/dist/js/leaflet.extra-markers.js';
 import apiRequest from "../../lib/apiRequest";
 import 'leaflet-extra-markers';
 import './mapRouting.css';
+import fetchFestivals from '../../lib/fetchFestivals';
+import { MetroLines, checkMetroIntersection } from '../../lib/metroData.jsx';
+
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 
@@ -56,32 +59,87 @@ const MapRouting = () => {
   const [showComplaints, setShowComplaints] = useState(false);
   const [showPotholes, setShowPotholes] = useState(false);
   const [showNearByPlaces, setShowNearByPlaces] = useState(false);
+  const [showSpots, setShowSpots] = useState(false);
+  const [showMetro, setShowMetro] = useState(false);
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  const [spots, setSpots] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
-
-
+  const [totalScore, setTotalScore] = useState(0);
+  const [festival, setFestival] = useState(null);
+  const [analysis, setShowAnalysis] = useState(false);
 
   const sourceInputRef = useRef(null);
   const destinationInputRef = useRef(null);
   const sourceAutocomplete = useRef(null);
   const destinationAutocomplete = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const [googleDirectionsRenderer, setGoogleDirectionsRenderer] = useState({
+    main: null,
+    outline: null
+  });
+  const googleMapRef = useRef(null);
 
-  useEffect(() => {
+
+ useEffect(() => {
     // Load Google Maps JavaScript API
     const loadGoogleMapsScript = () => {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,directions`;
       script.async = true;
       script.defer = true;
-      script.onload = initializeAutocomplete;
+      script.onload = () => {
+        initializeAutocomplete();
+        initGoogleMap();
+      };
       document.body.appendChild(script);
     };
-
     loadGoogleMapsScript();
   }, []);
+  
+
+  const initGoogleMap = () => {
+    const mapOptions = {
+      zoom: 12,
+      center: { lat: 18.46456, lng: 73.87389 },
+    };
+  
+    const googleMap = new window.google.maps.Map(document.getElementById('googleMap'), mapOptions);
+    googleMapRef.current = googleMap;
+  
+    const trafficLayer = new window.google.maps.TrafficLayer();
+    trafficLayer.setMap(googleMap);
+  
+    // Initialize the DirectionsRenderer with custom styling
+    const directionsRenderer = new window.google.maps.DirectionsRenderer({
+      map: googleMap,
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: '#FFFFFF',    // Light color
+        strokeOpacity: 0.7,        // Increased opacity
+        strokeWeight: 5,           // Slightly thicker
+        zIndex: 1                  // Below traffic layer
+      },
+    });
+    
+    const outlineRenderer = new window.google.maps.DirectionsRenderer({
+      map: googleMap,
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: '#000000',    // Outline color
+        strokeOpacity: 0.4,        // Transparent outline
+        strokeWeight: 7,           // Slightly thicker than main line
+        zIndex: 0                  // Below main line
+      },
+    });
+    
+  
+    setGoogleDirectionsRenderer({
+      main: directionsRenderer,
+      outline: outlineRenderer
+    });
+  };
 
   const initializeAutocomplete = () => {
     // Initialize Google Maps Autocomplete for source input
@@ -120,8 +178,35 @@ const MapRouting = () => {
     });
   };
 
+  const displayGoogleMapsRoute = async (source, destination) => {
+    if (!window.google || !googleMapRef.current || !googleDirectionsRenderer) return;
+  
+    const directionsService = new window.google.maps.DirectionsService();
+  
+    try {
+      const result = await directionsService.route({
+        origin: { lat: source.lat, lng: source.lng },
+        destination: { lat: destination.lat, lng: destination.lng },
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      });
+  
+      // Set the route on both renderers
+      googleDirectionsRenderer.main.setDirections(result);
+      googleDirectionsRenderer.outline.setDirections(result);
+  
+      // Optional: Fit the map to show the entire route
+      const bounds = new window.google.maps.LatLngBounds();
+      const route = result.routes[0].legs[0];
+      bounds.extend(route.start_location);
+      bounds.extend(route.end_location);
+      googleMapRef.current.fitBounds(bounds);
+    } catch (error) {
+      console.error("Error displaying route on Google Maps:", error);
+    }
+  };
 
-  const provider = new OpenStreetMapProvider();
+
+ const provider = new OpenStreetMapProvider();
 
   const handleAddressSearch = async (address) => {
     const results = await provider.search({ query: address });
@@ -136,12 +221,13 @@ const MapRouting = () => {
 
   const handleGetRoute = async () => {
     setLoading(true);
-    // if (!sourceCoords || !destinationCoords) {
-    //   alert("Please select valid source and destination addresses from the suggestions");
-    //   setLoading(false);
-    //   return;
-    // }
-    const [sourceCoords, destinationCoords] = await Promise.all([
+    if (!sourceCoords || !destinationCoords) {
+      alert("Please select valid source and destination addresses from the suggestions");
+      setLoading(false);
+      return;
+    }
+
+   /*const [sourceCoords, destinationCoords] = await Promise.all([
       handleAddressSearch(sourceAddress),
       handleAddressSearch(destinationAddress)
     ]);
@@ -152,27 +238,78 @@ const MapRouting = () => {
       return;
     } 
     setSourceCoords(sourceCoords);
-    setDestinationCoords(destinationCoords);
-    //144-156 to be removed later
+    setDestinationCoords(destinationCoords); */
+  
+    //151-163 to be removed later
+    handleClearRoute();
     setIsClicked(true); 
+    await displayGoogleMapsRoute(sourceCoords, destinationCoords);
   };
   
+  /*useEffect(() => {
+    if (isClicked && routePoints.length > 0) {
+      (async () => {
+        await Promise.all([fetchComplaints(), fetchPotholes(), fetchEvents(), fetchSpots()]); //fetchNearbyPlace() add later
+        console.log("Hi");
+        setTotalScore(6*potholes.length+10*spots.length+7*complaints.length+10*events.length+8*nearbyPlaces.length);
+        if (festival) {
+          setTotalScore(prevScore => prevScore + 4);
+        }
+        setLoading(false);
+      })();
+    }
+  }, [routePoints, isClicked]); */
+
   useEffect(() => {
     if (isClicked && routePoints.length > 0) {
       (async () => {
-        await Promise.all([fetchComplaints(), fetchPotholes(), fetchNearbyPlace(), fetchEvents()]);
+        await Promise.all([fetchComplaints(), fetchPotholes(),fetchNearbyPlace() ,fetchEvents(), fetchSpots()]); 
         setLoading(false);
       })();
     }
   }, [routePoints, isClicked]);
   
 
+  useEffect(() => {
+    if (routePoints.length > 0 && isClicked) {
+      let score = 6 * potholes.length + 10 * spots.length + 7 * complaints.length + 10 * events.length + 8 * nearbyPlaces.length;
+      if (festival) score += 4;
+      if (checkMetroIntersection(routePoints)) {
+        score += 9;
+      }
+      setTotalScore(score);
+    }
+  }, [potholes, spots, complaints, events, nearbyPlaces, festival, routePoints, isClicked]);
+  
+
+
+
+  useEffect(() => {
+    const checkForFestivals = async () => {
+      const year = new Date().getFullYear();
+      const country = 'IN';
+      const festivalsData = await fetchFestivals(year, country);
+      const today = new Date().toISOString().split('T')[0];
+      const festivalToday = festivalsData.find(festival => festival.date.iso === today);
+      setFestival(festivalToday);
+    };
+    checkForFestivals();
+  }, []);
+  
   
   const handleClearRoute = () => {
       setShowComplaints(false);
       setShowPotholes(false);
       setShowEvents(false);
       setShowNearByPlaces(false);
+      setShowSpots(false);
+      setShowAnalysis(false);
+      setShowMetro(false);
+
+      if (googleDirectionsRenderer) {
+        googleDirectionsRenderer.main.setDirections({ routes: [] });
+        googleDirectionsRenderer.outline.setDirections({ routes: [] });
+      }
   };
 
   const fetchComplaints = async () => {
@@ -184,7 +321,6 @@ const MapRouting = () => {
         return routePoints.some(routePoint => complaintLatLng.distanceTo(routePoint) <= 100);
       });
       setComplaints(filteredComplaints);
-      //setShowComplaints(true);
     } catch (error) {
       console.error("Error fetching complaints:", error);
     }
@@ -199,12 +335,50 @@ const MapRouting = () => {
         return routePoints.some(routePoint => potholeLatLng.distanceTo(routePoint) <= 50);
       });
       setPotholes(filteredPotholes);
-      //setShowPotholes(true);
     } catch (error) {
       console.error("Error fetching potholes:", error);
     }
   };
 
+
+const fetchSpots = async () => {
+  if (!sourceCoords) return alert("Please set source coordinates.");
+
+  try {
+
+      let allSpots = [];
+      let nextPageToken = null;
+
+      do {
+          const response = await apiRequest.post("/nearby/hotspots", {
+              params: {
+                  routePoints: routePoints,
+                  pagetoken: nextPageToken, 
+              }
+          });
+
+          if (response.data.results) {
+              allSpots = [...allSpots, ...response.data.results];
+              nextPageToken = response.data.next_page_token;
+          } else {
+              nextPageToken = null; // If no more results, break out of loop
+          }
+
+          // Wait for 2 seconds if nextPageToken is available
+          if (nextPageToken) {
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+          }
+      } while (nextPageToken);
+
+      const spots = allSpots.map(spot => ({
+         name: spot.location,
+         location: { lat: spot.lat, lng: spot.lng },
+      }));
+      setSpots(spots);
+  } catch (error) {
+      console.error("Error fetching traffic Spots:", error);
+  }
+};
 
 const fetchNearbyPlace = async () => {
   if (!sourceCoords) return alert("Please set source coordinates.");
@@ -283,7 +457,7 @@ const fetchNearbyPlace = async () => {
     <div>
       {/* Address Input Fields */}
 
-      <div className="address-inputs">
+      {/*<div className="address-inputs">
         <div>
           <label>Source </label>
           <input
@@ -304,10 +478,12 @@ const fetchNearbyPlace = async () => {
             placeholder="Enter destination address"
           />
         </div>
-      </div>
+        <button className="btn-map top1" onClick={handleGetRoute}>Get Route</button>
+        <button className="btn-map" onClick={handleClearRoute}>Clear Route</button>
+      </div>*/}
 
 
-      {/* <div className="address-inputs">
+      {<div className="address-inputs">
         <div>
           <label>Source </label>
           <input
@@ -330,19 +506,28 @@ const fetchNearbyPlace = async () => {
             placeholder="Enter destination address"
           />
         </div>
-      </div> */}
+        <button className="btn-map top1" id="get" onClick={handleGetRoute}>Get Route</button>
+        <button className="btn-map" id="clear" onClick={handleClearRoute}>Clear Route</button>
+      </div>}
 
 
 
-      <button className="btn top1" onClick={handleGetRoute}>Get Route</button>
-      <button className="btn" onClick={handleClearRoute}>Clear Route</button>
+     
 
       {loading && <div className="loading">Fetching route...</div>}
-
+      <div className='map'>
+      <div className="buttonGroup">
+        <button className="btn-map" onClick={() => setShowComplaints(true)}>Check for Complaints</button>
+        <button className="btn-map" onClick={() => setShowPotholes(true)}>Check for Potholes</button>
+        <button className="btn-map" onClick={() => setShowEvents(true)}>Check for the Events</button>
+        <button className="btn-map" onClick={() => setShowNearByPlaces(true)}>Nearby schools/colleges</button>
+        <button className="btn-map" onClick={() => setShowSpots(true)}>Check for Traffic Spots</button>
+        <button className="btn-map" onClick={() => setShowMetro(true)}>Check for Metro Lines</button>
+      </div>
       <MapContainer
         center={[18.500030, 73.858416]}
         zoom={13}
-        style={{ height: '500px', width: '100%' }}
+        style={{ height: '460px', width: '48%', border:'2.5px solid black' }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -418,30 +603,67 @@ const fetchNearbyPlace = async () => {
             </Popup>
           </Marker>
         ))}
+
         
+        {showSpots && spots.map((spot, index) => (
+          <Marker
+            key={index}
+            position={[parseFloat(spot.location.lat), parseFloat(spot.location.lng)]}
+            icon={L.ExtraMarkers.icon({
+              icon: 'fa-circle',
+              markerColor: 'green',
+              prefix: 'fa'
+            })}
+          >
+            <Popup>
+              <div>
+                <p>{spot.location}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+        
+
         {showNearByPlaces && nearbyPlaces.map((place, index) => (
           <Marker key={index} position={[place.location.lat, place.location.lng]}>
             <Popup>{place.name}</Popup>
           </Marker>
         ))}
 
+        <MetroLines showMetro={showMetro} routePoints={routePoints} />
+
       </MapContainer>
-
-      <div className="buttonGroup" style={{ marginTop: '10px' }}>
-        <button className="btn" onClick={() => setShowComplaints(true)}>Check for Complaints</button>
-        <button className="btn" onClick={() => setShowPotholes(true)}>Check for Potholes</button>
-        <button className="btn" onClick={() => setShowEvents(true)}>Check for Events</button>
-        {/*<button className="btn" onClick={() => setShowNearByPlaces(true)}>Nearby schools/colleges</button>*/}
+      <div id="googleMap" style={{ height: '460px', width: '48%', border:'2.5px solid black'}}></div>
       </div>
 
 
-      <div className="reason-container">
-        <h2>Probable Traffic Reason:</h2>
-        <p>1. Number of Potholes on the route: {potholes.length}</p>
-        <p>2. Number of Complaints registered on the route: {complaints.length}</p>
-        <p>3. Number of Events registered on the route: {complaints.length}</p>
-        <p>4. Number of Schools & College with opening & closing time soon: {nearbyPlaces.length}</p>
-      </div>
+      {routePoints.length>0 && <div className='message'>
+        <button className="btn-map" id="analyze" onClick={() => setShowAnalysis(true)}>View Detailed Analysis</button>
+        <p style={{
+          color: totalScore <= 19 ? 'green' : totalScore <= 39 ? 'yellow' : 'red'
+        }}>
+        {totalScore <= 19 && "Traffic on the selected route seems to be LOW "}
+        {totalScore >= 20 && totalScore <= 39 && "Traffic on the selected route seems to be MEDIUM "}
+        {totalScore >= 40 && "Traffic on the selected route seems to be HIGH "}
+        {totalScore}
+      </p>
+      </div>}
+
+
+
+      {analysis && <div className="reason-container">
+        <h2>Probable Traffic Reasons:</h2>
+        {potholes.length>0 && <p>Number of Potholes on the route: {potholes.length}</p>}
+        {complaints.length>0 && <p>Number of Complaints registered on the route: {complaints.length}</p>}
+        {complaints.length>0 && <p>Number of Events registered on the route: {complaints.length}</p>}
+        {nearbyPlaces.length>0 && <p>Number of Schools & College with opening & closing time soon: {nearbyPlaces.length}</p>}
+        {spots.length>0 && <p>Number of Traffic Hotspots according recent Data by PMC: {spots.length}</p>}
+        {checkMetroIntersection(routePoints) && <p>Metro construction work is ongoing on this route</p>}
+        {festival && <p>6. Festival today: {festival}</p>}
+
+      </div>}
+
+
     </div>
   );
 };
