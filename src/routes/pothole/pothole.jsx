@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import './pothole.css';
 import apiRequest from '../../lib/apiRequest';
-import { AuthContext } from '../../context/authContext';
 
 const Pothole = () => {
   const [image, setImage] = useState(null);
@@ -9,7 +8,6 @@ const Pothole = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -47,11 +45,9 @@ const Pothole = () => {
     setIsLoading(true);
     setError("");
     const { lat, lng } = location; 
-    const userId = currentUser._id;
 
     try {
       const res = await apiRequest.post("/model/", {
-        userId,
         lng,
         lat,
         image

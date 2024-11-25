@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import './Event.css';
-import { AuthContext } from '../../context/authContext';
 import apiRequest from '../../lib/apiRequest';
 
 const Event = () => {
@@ -11,7 +10,6 @@ const Event = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -41,11 +39,9 @@ const Event = () => {
     setIsLoading(true);
     setError("");
     const { lat, lng } = location; 
-    const userId = currentUser._id;
 
     try {
       await apiRequest.post("/event/", {
-        userId,
         lng,
         lat,
         category,
