@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Complaint.css';
-import { AuthContext } from '../../context/authContext';
 import apiRequest from '../../lib/apiRequest';
 
 const Complaint = () => {
@@ -10,7 +9,6 @@ const Complaint = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -48,11 +46,9 @@ const Complaint = () => {
     setIsLoading(true);
     setError("");
     const { lat, lng } = location; 
-    const userId = currentUser._id;
 
     try {
       const res = await apiRequest.post("/complaint/", {
-        userId,
         lng,
         lat,
         image,

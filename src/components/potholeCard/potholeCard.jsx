@@ -10,7 +10,7 @@ const PotholeCard = ({ imageSrc, longitude, latitude, placeName, onResolved }) =
         <p>Longitude: {longitude}</p>
         <p>Latitude: {latitude}</p>
       </div>
-      <button className="resolved-button" onClick={onResolved}>Resolved</button>
+      <button className="resolved-button" onClick={onResolved}>Resolve</button>
     </div>
   );
 };

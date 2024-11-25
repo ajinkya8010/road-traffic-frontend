@@ -427,7 +427,6 @@ const fetchNearbyPlace = async () => {
     try {
       const response = await apiRequest.get("/event/getEventData"); 
       const data = response.data;
-  
 
       const now = new Date();
         const filteredEvents = data.filter(event => {
@@ -443,7 +442,6 @@ const fetchNearbyPlace = async () => {
           isOnRoute
         );
       });
-  
       setEvents(filteredEvents);
       //setShowEvents(true);
     } catch (error) {
@@ -655,7 +653,7 @@ const fetchNearbyPlace = async () => {
         <h2>Probable Traffic Reasons:</h2>
         {potholes.length>0 && <p>Number of Potholes on the route: {potholes.length}</p>}
         {complaints.length>0 && <p>Number of Complaints registered on the route: {complaints.length}</p>}
-        {complaints.length>0 && <p>Number of Events registered on the route: {complaints.length}</p>}
+        {complaints.length>0 && <p>Number of Events registered on the route: {events.length}</p>}
         {nearbyPlaces.length>0 && <p>Number of Schools & College with opening & closing time soon: {nearbyPlaces.length}</p>}
         {spots.length>0 && <p>Number of Traffic Hotspots according recent Data by PMC: {spots.length}</p>}
         {checkMetroIntersection(routePoints) && <p>Metro construction work is ongoing on this route</p>}
