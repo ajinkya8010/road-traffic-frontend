@@ -125,12 +125,8 @@ const Complaint = () => {
               Wrong side driving/riding
             </option>
             <option value="Congestion at Bus Stops">Congestion at Bus Stops</option>
-            <option value="Road Obstructions: Debris">Road Obstructions: Debris</option>
-            <option value="Road Obstructions: Debris">Road Obstructions: Debris</option>
-            <option value="Road Obstructions: Garbage">Road Obstructions: Garbage</option>
-            <option value="Road Obstructions: Waste Management">Road Obstructions: Waste Management</option>
-            <option value="Other">Other</option>
-            
+            <option value="Debris/Garbage">Debris/Garbage</option>
+            <option value="Waste Chronic Spot">Waste Chronic Spot</option>            
           </select>
         </div>
 

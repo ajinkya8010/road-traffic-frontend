@@ -9,6 +9,8 @@ const Event = () => {
   const [lineData, setLineData] = useState([{ lat: "", lng: "" }]); 
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [crowd, setCrowd] = useState(0);
+  const [vehicleCount, setVehicleCount] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +61,8 @@ const Event = () => {
         category,
         startTime,
         endTime,
+        crowd,
+        vehileCount,
         location: {
           type: dataType,
           coordinates: dataType === "Point" 
@@ -206,6 +210,36 @@ const Event = () => {
             value={endTime}
             onChange={(e) => {
               setEndTime(e.target.value);
+              handleInputChange();
+            }}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="crowd">Crowd</label>
+          <input
+            type="number"
+            id="crowd"
+            className="event-input"
+            value={crowd}
+            onChange={(e) => {
+              setCrowd(e.target.value);
+              handleInputChange();
+            }}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="vehicleCount">Vehicle Count</label>
+          <input
+            type="number"
+            id="vehicleCount"
+            className="event-input"
+            value={vehicleCount}
+            onChange={(e) => {
+              setVehicleCount(e.target.value);
               handleInputChange();
             }}
             required
