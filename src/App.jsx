@@ -12,6 +12,7 @@ import AdminDashboard from "./routes/admin/adminDashboard";
 import PotholeDisplay from "./routes/potholeDisplay/potholeDisplay";
 import ComplaintDisplay from "./routes/complaintDisplay/complaintDisplay";
 import UserDisplay from "./routes/userDisplay/userDisplay";
+import RouteHistory from "./routes/routeHistory/routeHistory";
 
 function App() {
   const router = createBrowserRouter([
@@ -56,6 +57,10 @@ function App() {
         {
           path:"/event",
           element:<Event/>
+        },
+        {
+          path:"/route-history",
+          element:<RouteHistory/>
         }
       ]
     },
