@@ -62,7 +62,7 @@ const Event = () => {
         startTime,
         endTime,
         crowd,
-        vehileCount,
+        vehicleCount,
         location: {
           type: dataType,
           coordinates: dataType === "Point" 
