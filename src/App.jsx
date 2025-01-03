@@ -13,77 +13,176 @@ import PotholeDisplay from "./routes/potholeDisplay/potholeDisplay";
 import ComplaintDisplay from "./routes/complaintDisplay/complaintDisplay";
 import UserDisplay from "./routes/userDisplay/userDisplay";
 import RouteHistory from "./routes/routeHistory/routeHistory";
+import LineScoreDate from "./routes/linescoredate/lineScoreDate";
+import LineScoreDateAll from "./routes/linescoredateall/lineScoreDateAll";
+import BarScoreTime from "./routes/barscoretime/barScoreTime";
+import PieChartInput from "./routes/pieChartInput/pieCharInput";
+
 
 function App() {
+  // const router = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <Layout />,
+  //     children: [
+  //       {
+  //         path: "/",
+  //         element: <HomePage />,
+  //       },
+  //       {
+  //         path: "/login",
+  //         element: <Login />,
+  //       },
+  //       {
+  //         path: "/register",
+  //         element: <Register />,
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     path:"/",
+  //     element:<RequireAuth/>,
+  //     children:[
+  //       {
+  //         path: "/pothole",
+  //         element: <Pothole />,
+  //       },
+  //       {
+  //         path: "/complaint",
+  //         element: <Complaint />,
+  //       },
+  //       {
+  //         path:"/analysis",
+  //         element:<Analysis/>
+  //       },
+  //       {
+  //         path:"/redeem",
+  //         element:<Redeem/>
+  //       },
+  //       {
+  //         path:"/event",
+  //         element:<Event/>
+  //       },
+  //       {
+  //         path:"/route-history",
+  //         element:<RouteHistory/>,
+  //         children:[
+  //           {
+  //             path:"/route-history/line-score-date",
+  //             element:<LineScoreDate/>
+  //           }
+  //         ]
+  //       },
+  //     ]
+  //   },
+  //   {
+  //     path: "/admin",
+  //     element: <RequireAuth requiredRole="admin" />, // Restrict this route to admins only
+  //     children: [
+  //       {
+  //         path: "/admin",
+  //         element: <AdminDashboard />,
+  //       },
+  //       {
+  //         path: "/admin/potholes",
+  //         element: <PotholeDisplay />,
+  //       },
+  //       {
+  //         path: "/admin/complaints",
+  //         element: <ComplaintDisplay />,
+  //       },
+  //       {
+  //         path:"/admin/users",
+  //         element: <UserDisplay/>
+  //       }
+  //     ],
+  //   },
+  // ]);
+
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
       children: [
         {
-          path: "/",
+          path: "/", // HomePage
           element: <HomePage />,
         },
         {
-          path: "/login",
+          path: "login", // Relative path
           element: <Login />,
         },
         {
-          path: "/register",
+          path: "register", // Relative path
           element: <Register />,
-        }
-      ]
+        },
+      ],
     },
     {
-      path:"/",
-      element:<RequireAuth/>,
-      children:[
+      element: <RequireAuth />, // Authenticated routes
+      children: [
         {
-          path: "/pothole",
+          path: "pothole", // Relative path
           element: <Pothole />,
         },
         {
-          path: "/complaint",
+          path: "complaint", // Relative path
           element: <Complaint />,
         },
         {
-          path:"/analysis",
-          element:<Analysis/>
+          path: "analysis", // Relative path
+          element: <Analysis />,
         },
         {
-          path:"/redeem",
-          element:<Redeem/>
+          path: "redeem", // Relative path
+          element: <Redeem />,
         },
         {
-          path:"/event",
-          element:<Event/>
+          path: "event", // Relative path
+          element: <Event />,
         },
         {
-          path:"/route-history",
-          element:<RouteHistory/>
-        }
-      ]
+          path: "route-history", // RouteHistory
+          element: <RouteHistory />
+        },
+        {
+          path: "line-score-date", 
+          element: <LineScoreDate/>
+        },
+        {
+          path: "line-score-date-all",
+          element:<LineScoreDateAll/>
+        },
+        {
+          path: "bar-score-time",
+          element: <BarScoreTime/>
+        },
+        {
+          path: "complaint-count",
+          element: <PieChartInput/>
+        },
+      ],
     },
     {
-      path: "/admin",
-      element: <RequireAuth requiredRole="admin" />, // Restrict this route to admins only
+      path: "admin", // Admin base route
+      element: <RequireAuth requiredRole="admin" />, // Restrict admin routes
       children: [
         {
-          path: "/admin",
+          path: "", // AdminDashboard (default child route)
           element: <AdminDashboard />,
         },
         {
-          path: "/admin/potholes",
+          path: "potholes", // PotholeDisplay
           element: <PotholeDisplay />,
         },
         {
-          path: "/admin/complaints",
+          path: "complaints", // ComplaintDisplay
           element: <ComplaintDisplay />,
         },
         {
-          path:"/admin/users",
-          element: <UserDisplay/>
-        }
+          path: "users", // UserDisplay
+          element: <UserDisplay />,
+        },
       ],
     },
   ]);

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import "./navbar.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
@@ -28,6 +28,7 @@ function Navbar() {
         <a href="/redeem">Redeem</a>
         <a href="/admin">Admin</a>
         <a href="/route-history">Route-History</a>
+        <a href="/complaint-count">Complaint-Count</a>
       </div>
       <div className="right">
         {currentUser ? (
