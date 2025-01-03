@@ -1,5 +1,5 @@
 import React from 'react';
-import './PotholeCard.css';
+import './potholeCard.css';
 
 const PotholeCard = ({ imageSrc, longitude, latitude, placeName, onResolved }) => {
   return (
