@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Complaint.css';
+import './complaint.css';
 import apiRequest from '../../lib/apiRequest';
 
 const Complaint = () => {
