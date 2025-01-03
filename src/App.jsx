@@ -109,11 +109,11 @@ function App() {
           element: <HomePage />,
         },
         {
-          path: "login", // Relative path
+          path: "/login", // Relative path
           element: <Login />,
         },
         {
-          path: "register", // Relative path
+          path: "/register", // Relative path
           element: <Register />,
         },
       ],
@@ -122,43 +122,43 @@ function App() {
       element: <RequireAuth />, // Authenticated routes
       children: [
         {
-          path: "pothole", // Relative path
+          path: "/pothole", // Relative path
           element: <Pothole />,
         },
         {
-          path: "complaint", // Relative path
+          path: "/complaint", // Relative path
           element: <Complaint />,
         },
         {
-          path: "analysis", // Relative path
+          path: "/analysis", // Relative path
           element: <Analysis />,
         },
         {
-          path: "redeem", // Relative path
+          path: "/redeem", // Relative path
           element: <Redeem />,
         },
         {
-          path: "event", // Relative path
+          path: "/event", // Relative path
           element: <Event />,
         },
         {
-          path: "route-history", // RouteHistory
+          path: "/route-history", // RouteHistory
           element: <RouteHistory />
         },
         {
-          path: "line-score-date", 
+          path: "/line-score-date", 
           element: <LineScoreDate/>
         },
         {
-          path: "line-score-date-all",
+          path: "/line-score-date-all",
           element:<LineScoreDateAll/>
         },
         {
-          path: "bar-score-time",
+          path: "/bar-score-time",
           element: <BarScoreTime/>
         },
         {
-          path: "complaint-count",
+          path: "/complaint-count",
           element: <PieChartInput/>
         },
       ],
