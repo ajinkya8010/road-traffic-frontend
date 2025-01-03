@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, FeatureGroup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
-import axios from "axios";
-import "./Event.css";
+import "./event.css";
 import apiRequest from "../../lib/apiRequest";
 
 const Event = () => {
