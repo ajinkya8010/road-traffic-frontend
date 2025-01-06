@@ -109,7 +109,7 @@ function App() {
           element: <HomePage />,
         },
         {
-          path: "/login", // Relative path
+          path: "/login", 
           element: <Login />,
         },
         {
@@ -122,7 +122,7 @@ function App() {
       element: <RequireAuth />, // Authenticated routes
       children: [
         {
-          path: "/pothole", // Relative path
+          path: "/pothole", 
           element: <Pothole />,
         },
         {
