@@ -1667,11 +1667,9 @@ const fetchConstructions = async () => {
     }
   }, [sourceCoords, destinationCoords]);
 
- 
+
   const createDiversionPolylines = () => {
     clearMarkerGroup('diversions');
-    
-    // if (!visibility.diversions || !googleMapRef.current) return;
   
     const newMarkers = diversions.map(diversion => {
       const path = diversion.diversionPoints.map(point => ({
@@ -1682,11 +1680,20 @@ const fetchConstructions = async () => {
       const polyline = new window.google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-        strokePattern: [10, 10],
-        map: googleMapRef.current
+        strokeOpacity: 0, // Set to 0 to use the dashed pattern
+        strokeColor: '#2A004E',
+        map: googleMapRef.current,
+        icons: [
+          {
+            icon: {
+              path: 'M 0,-1 0,1', // This creates a dash
+              strokeOpacity: 1,
+              scale: 4 // Adjust the scale to change dash size
+            },
+            offset: '0',
+            repeat: '13px' // Adjust to change dash spacing
+          }
+        ]
       });
   
       // Add an info window for the diversion
@@ -1719,45 +1726,55 @@ const fetchConstructions = async () => {
       diversions: newMarkers
     }));
   };
+  
 
   const createConstructionPolylines = () => {
     clearMarkerGroup('constructions');
-    
-    // if (!visibility.constructions || !googleMapRef.current) return;
   
     const newMarkers = constructions.map(construction => {
       const path = construction.constructionPoints.map(point => ({
         lat: parseFloat(point.lat),
-        lng: parseFloat(point.lng)
+        lng: parseFloat(point.lng),
       }));
   
       const polyline = new window.google.maps.Polyline({
         path: path,
         geodesic: true,
+        strokeOpacity: 0, // Set to 0 to use the custom pattern
         strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-        strokePattern: [10, 10],
-        map: googleMapRef.current
+        map: googleMapRef.current,
+        icons: [
+          {
+            icon: {
+              path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Triangle shape
+              strokeOpacity: 1,
+              scale: 3, // Adjust to set the size of the triangle
+              fillColor: '#FF0000', // Triangle fill color
+              fillOpacity: 1,
+            },
+            offset: '0',
+            repeat: '15px', // Adjust for spacing between triangles
+          },
+        ],
       });
   
-      // Add an info window for the diversion
+      // Add an info window for the construction
       const infoWindow = new window.google.maps.InfoWindow({
         content: `
           <div>
             <h3>${construction.projectName}</h3>
-            <p>Type: ${constructions.type}</p>
-            <p>Vendor: ${constructions.vendorName}</p>
-            <p>Duration: ${new Date(constructions.startDate).toLocaleDateString()} - 
-                        ${new Date(constructions.endDate).toLocaleDateString()}</p>
+            <p>Type: ${construction.type}</p>
+            <p>Vendor: ${construction.vendorName}</p>
+            <p>Duration: ${new Date(construction.startDate).toLocaleDateString()} - 
+                        ${new Date(construction.endDate).toLocaleDateString()}</p>
           </div>
-        `
+        `,
       });
   
       // Add click listener to show info window
       polyline.addListener('click', () => {
         infoWindow.setPosition(new window.google.maps.LatLng(
-          construction.constuctionPoints[0].lat,
+          construction.constructionPoints[0].lat,
           construction.constructionPoints[0].lng
         ));
         infoWindow.open(googleMapRef.current);
@@ -1768,14 +1785,12 @@ const fetchConstructions = async () => {
   
     setMarkerGroups(prev => ({
       ...prev,
-      constructions: newMarkers
+      constructions: newMarkers,
     }));
   };
-
+  
   const createEventPolylines = () => {
     clearMarkerGroup('events');
-    
-    // if (!visibility.events || !googleMapRef.current) return;
   
     const newMarkers = events.map(event => {
       const path = event.eventPoints.map(point => ({
@@ -1788,7 +1803,7 @@ const fetchConstructions = async () => {
         geodesic: true,
         strokeColor: '#FF0000',
         strokeOpacity: 1.0,
-        strokeWeight: 2,
+        strokeWeight: 5,
         strokePattern: [10, 10], 
         map: googleMapRef.current
       });
@@ -1918,15 +1933,31 @@ const fetchConstructions = async () => {
                   Schools/Clgs
               </li>
               <li>
-                <span className="marker-color" style={{ backgroundColor: '#E83E8C' }}></span>
+                <span className="marker-color" style={{ backgroundColor: '#17594A' }}></span>
+                  Gardens
+              </li>
+              <li>
+                <span className="marker-icon">
+                  <svg width="20" height="20">
+                    <line x1="0" y1="10" x2="20" y2="10" stroke="#FF0000" strokeWidth="2"/>
+                  </svg>
+                </span>
                   Events
               </li>
               <li>
-                <span className="marker-color" style={{ backgroundColor: '#795548' }}></span>
+                <span className="marker-icon">
+                  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                      <polygon points="10,2 15,10 10,18 12,10" fill="#FF0000" />
+                  </svg>
+                </span>
                   Constructions
               </li>
               <li>
-                <span className="marker-color" style={{ backgroundColor: '#17A2B8' }}></span>
+                <span className="marker-icon">
+                  <svg width="20" height="20">
+                    <line x1="0" y1="10" x2="20" y2="10" stroke="#2A004E" strokeWidth="2" strokeDasharray="6, 6" />
+                  </svg>
+                </span>
                   Diversions
               </li>
             </ul>
@@ -1945,7 +1976,7 @@ const fetchConstructions = async () => {
               : totalScore <= 29 
                 ? 'lightgreen' 
                 : totalScore <= 59 
-                  ? 'yellow' 
+                  ? 'orange' 
                   : totalScore <= 79 
                     ? 'red' 
                     : 'darkred'
@@ -1960,7 +1991,7 @@ const fetchConstructions = async () => {
         </div>
       )}
 
-      {analysis && (
+      {/* {analysis && (
         <div className="reason-container">
           <h2>Probable Traffic Reasons:</h2>
           {potholes.length > 0 && <p>Number of Potholes on the route: {potholes.length}</p>}
@@ -1979,7 +2010,120 @@ const fetchConstructions = async () => {
           {constructions.length > 0 && <p>Number of contructions on the route: {constructions.length}</p>}
           {festival && <p>Festival today: {festival.name}</p>}
         </div>
+      )} */}
+
+      {analysis && (
+        <div className="reason-container">
+          <h2>Probable Traffic Reasons:</h2>
+          <ul>
+            {potholes.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#FF0000' }}></span>
+                Potholes - {potholes.length}
+              </p>
+            )}
+            {complaints.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#28A745' }}></span>
+                Complaints - {complaints.length}
+              </p>
+            )}
+            {events.length > 0 && (
+              <p>
+                <span className="marker-icon">
+                  <svg width="20" height="20">
+                    <line x1="0" y1="10" x2="20" y2="10" stroke="#FF0000" strokeWidth="2"/>
+                  </svg>
+                </span>
+                Events - {events.length}
+              </p>
+            )}
+            {nearbyPlaces.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#17A2B8' }}></span>
+                Schools/Colleges - {nearbyPlaces.length}
+              </p>
+            )}
+            {spots.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#FD7E14' }}></span>
+                Traffic Hotspots - {spots.length}
+              </p>
+            )}
+
+            {banquethalls.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#20C997' }}></span>
+                Banquet Halls - {banquethalls.length}
+              </p>
+            )}
+
+            {gardens.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#17594A' }}></span>
+                Gardens - {gardens.length}
+              </p>
+            )}
+
+            {hospitals.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#6F42C1' }}></span>
+                Hospitals - {hospitals.length}
+              </p>
+            )}
+
+            {hotels.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#FFC107' }}></span>
+                Hotels - {hotels.length}
+              </p>
+            )}
+
+            {malls.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#E83E8C' }}></span>
+                Malls - {malls.length}
+              </p>
+            )}
+
+            {parkingbuildings.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#795548' }}></span>
+                Parking Buildings - {parkingbuildings.length}
+              </p>
+            )}
+
+            {schools.length > 0 && (
+              <p>
+                <span className="marker-color" style={{ backgroundColor: '#17A2B8' }}></span>
+                Schools - {schools.length}
+              </p>
+            )}
+
+            {diversions.length > 0 && (
+              <p>
+                <span className="marker-icon">
+                  <svg width="20" height="20">
+                    <line x1="0" y1="10" x2="20" y2="10" stroke="#2A004E" strokeWidth="2" strokeDasharray="6, 6" />
+                  </svg>
+                </span>
+                Diversions - {diversions.length}
+              </p>
+            )}
+            {constructions.length > 0 && (
+              <p>
+                <span className="marker-icon">
+                  <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                      <polygon points="10,2 15,10 10,18 12,10" fill="#FF0000" />
+                  </svg>
+                </span>
+                Constructions - {constructions.length}
+              </p>
+            )}
+          </ul>
+        </div>
       )}
+
     </div>
   );
 };

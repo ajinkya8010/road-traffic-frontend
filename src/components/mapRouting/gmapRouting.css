@@ -144,7 +144,7 @@
   .legend ul {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -163,5 +163,11 @@
     margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 50%;
+  }
+  
+  .marker-icon {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
   }
   
