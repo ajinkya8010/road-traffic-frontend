@@ -13,6 +13,10 @@
     outline: none;
     box-shadow: 0 0 8px rgba(255, 220, 115, 0.6);
   }
+
+  .input-btn-group{
+    display: flex;
+  }
   
   .loading {
     text-align: center;
@@ -75,13 +79,16 @@
   }
   
   .reason-container {
-    width: 490px;
+    width: 350px;
     margin: 35px auto;
     padding: 20px;
     border-radius: 10px;
     background-color: #f9f9f9;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     border: 2px solid #4caf50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .reason-container h2 {
@@ -93,17 +100,9 @@
   
   .reason-container p {
     margin: 8px 0;
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
-  
-  .reason-container p:nth-child(odd) {
-    color: #333;
-  }
-  
-  .reason-container p:nth-child(even) {
-    color: #555;
-  }
-  
+    
   .message {
     display: flex;
     margin: auto;
@@ -144,7 +143,7 @@
   .legend ul {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 6.2px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -169,5 +168,75 @@
     display: inline-block;
     margin-right: 8px;
     vertical-align: middle;
+  }
+
+  .traffic-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .traffic-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .traffic-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .traffic-info {
+    font-size: 1rem;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .traffic-name {
+    font-weight: bold;
+  }
+  
+  .traffic-status {
+    font-weight: bold;
+    text-transform: capitalize;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  
+  .traffic-status.low {
+    color: #4caf50;
+    background-color: #e8f5e9;
+  }
+  
+  .traffic-status.medium {
+    color: #ff9800;
+    background-color: #fff3e0;
+  }
+  
+  .traffic-status.high {
+    color: #f44336;
+    background-color: #ffebee;
+  }
+  
+  .traffic-updated {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 4px;
+  }
+  
+  .no-data {
+    text-align: center;
+    font-size: 1rem;
+    color: #888;
+  }
+
+  .detailed{
+    display: flex;
+    justify-content: space-around;
   }
   
