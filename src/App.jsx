@@ -17,6 +17,7 @@ import LineScoreDate from "./routes/linescoredate/lineScoreDate";
 import LineScoreDateAll from "./routes/linescoredateall/lineScoreDateAll";
 import BarScoreTime from "./routes/barscoretime/barScoreTime";
 import PieChartInput from "./routes/pieChartInput/pieCharInput";
+import TrafficStatus from "./routes/trafficStatus/trafficStatus";
 
 
 function App() {
@@ -161,6 +162,10 @@ function App() {
           path: "/complaint-count",
           element: <PieChartInput/>
         },
+        {
+          path: "/traffic-status",
+          element: <TrafficStatus/> 
+        }
       ],
     },
     {

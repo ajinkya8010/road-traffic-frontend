@@ -29,6 +29,7 @@ const MapRouting = () => {
   const [routePoints, setRoutePoints] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [trafficStatus, setTrafficStatus] = useState([]);
 
   
   const sourceInputRef = useRef(null);
@@ -146,8 +147,8 @@ const MapRouting = () => {
         map: map,
         suppressMarkers: true,
         polylineOptions: {
-          strokeColor: '#6FA1EC',
-          strokeWeight: 4
+          strokeColor: '#1e11f0',
+          strokeWeight: 2
         }
       });
       setDirectionsRenderer(renderer);
@@ -472,7 +473,7 @@ const fetchEvents = async () => {
   const fetchGardens = async () => {
     try {
         // Fetch the gardens data from the backend
-        const response = await apiRequest.get("/garden/getAllGardens");
+        const response = await apiRequest.get("/garden/get");
         const data = response.data;
 
         // Filter gardens near the route
@@ -532,7 +533,7 @@ const fetchHospitals = async () => {
 const fetchHotels = async () => {
     try {
         // Fetch the hotels data from the backend
-        const response = await apiRequest.get("/hotel/getAllHotels");
+        const response = await apiRequest.get("/hotel/get");
         const data = response.data;
 
         // Filter hotels near the route
@@ -548,7 +549,7 @@ const fetchHotels = async () => {
                 return window.google.maps.geometry.spherical.computeDistanceBetween(
                     hotelLatLng,
                     routeLatLng
-                ) <= 500;
+                ) <= 100;
             });
         });
 
@@ -562,7 +563,7 @@ const fetchHotels = async () => {
 const fetchMalls = async () => {
     try {
         // Fetch the malls data from the backend
-        const response = await apiRequest.get("/mall/getAllMalls");
+        const response = await apiRequest.get("/mall/get");
         const data = response.data;
         // Filter malls near the route
         const filteredMalls = data.filter(mall => {
@@ -707,6 +708,22 @@ const fetchConstructions = async () => {
   }
   };
 
+  const combineAndSend = async () => {
+    try {
+      // Combine the three lists into a single array
+      const combinedList = [...malls, ...hotels, ...gardens];
+
+      // Send the combined list to the backend
+      const response = await apiRequest.post("/traffic-status/getTrafficStatus", {
+        names: combinedList,
+      });
+
+      setTrafficStatus(response.data.trafficStatus);
+    } catch (error) {
+      console.error("Error sending data:", error);
+    }
+  };
+
   function checkBuses(schools){
     let total = schools.reduce((acc,curr)=>{
       return acc+curr.numberOfSchoolBuses;
@@ -723,7 +740,7 @@ const fetchConstructions = async () => {
           fetchPotholes(),
           fetchEvents(),
           fetchSpots(),
-          // fetchNearbyPlace(),
+          //fetchNearbyPlace(),
           fetchBanquetHalls(),
           fetchGardens(),
           fetchHospitals(),
@@ -1199,8 +1216,11 @@ const fetchConstructions = async () => {
       }
 
       score+=checkBuses(schools);
-      
+
     setTotalScore(score);
+    combineAndSend();
+    console.log(trafficStatus);
+    
     if(!isSent){
       const matchingRouteId = findMatchingRoute();
       if (matchingRouteId) {
@@ -1853,7 +1873,6 @@ const fetchConstructions = async () => {
     <div>
       <div className="address-inputs">
         <div>
-          <label>Source </label>
           <input
             ref={sourceInputRef}
             className="styled-input"
@@ -1868,7 +1887,6 @@ const fetchConstructions = async () => {
           />
         </div>
         <div>
-          <label>Destination </label>
           <input
             ref={destinationInputRef}
             className="styled-input"
@@ -2012,7 +2030,10 @@ const fetchConstructions = async () => {
         </div>
       )} */}
 
+      <div className='detailed'>
+        
       {analysis && (
+        <>
         <div className="reason-container">
           <h2>Probable Traffic Reasons:</h2>
           <ul>
@@ -2122,7 +2143,30 @@ const fetchConstructions = async () => {
             )}
           </ul>
         </div>
+        </>
       )}
+      {analysis && trafficStatus.length > 0 && (
+        <div className="reason-container">
+          <h2>Latest Traffic Update</h2>
+          <ul className="traffic-list">
+            {trafficStatus.map((item, index) => (
+              <li key={index} className="traffic-item">
+                <div className="traffic-info">
+                  <span className="traffic-name">{item.name}</span> - 
+                  <span className={`traffic-status ${item.status.toLowerCase()}`}>
+                    {item.status}
+                  </span>
+                </div>
+                <div className="traffic-updated">
+                  Last Updated At: {new Date(item.updatedAt).toLocaleString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      </div>
 
     </div>
   );

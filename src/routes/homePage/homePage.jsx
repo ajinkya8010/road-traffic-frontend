@@ -11,6 +11,8 @@ function HomePage() {
         <br />
         <a href="/event" className="btn">Register an Event</a>
         <br />
+        <a href="/traffic-status" className="btn">Update Traffic Status</a>
+        <br />
         <a href="/analysis" className="btn">Analyze</a>
       </div>
       <div className="right">
