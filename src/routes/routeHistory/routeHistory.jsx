@@ -4,9 +4,9 @@ import './routeHistory.css'
 const RouteHistory = () => {
   return (
     <div className='btn-container'>
-        <a href="/line-score-date" className="btn">View Date v/s Score for a path</a>
-        <a href="/bar-score-time" className="btn">View Time vs Score for a path</a>
-        {/* <a href="/line-score-date-all" className="btn">Compare Date v/s Score for all paths</a> */}
+        <a href="/traffic-calendar" className="btn">Traffic Calendar</a>
+        <a href="/festival-analysis" className="btn">Festival traffic analysis (last 4 years)</a>
+        <a href="/last-four-week" className="btn">Last 4 week analysis for a WeekDay</a>
     </div>
   )
 }

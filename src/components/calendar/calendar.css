@@ -1,0 +1,189 @@
+/* Calendar Container */
+.custom-calendar {
+  text-align: center;
+  padding: 20px;
+  background-color: #f0f8ff; /* Light blue background */
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom-calendar h2 {
+  font-size: 1.8rem;
+  color: #2c3e50; /* Dark blue text */
+  margin-bottom: 20px;
+}
+
+/* Calendar Styling */
+.calendar {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.react-calendar__tile {
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #2c3e50; /* Dark blue text for dates */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.react-calendar__tile:disabled {
+  background-color: #f0f0f0; /* Light gray for disabled tiles */
+  color: #ccc;
+}
+
+/* Weekend Highlighting */
+.tile.weekend {
+  background-color: #ffebee; /* Light red for weekends */
+  color: #d32f2f; /* Dark red text for better contrast */
+  border: 2px solid black;
+}
+
+.tile.weekend:hover {
+  background-color: #ffcdd2; /* Slightly darker red on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Weekday Styling */
+.tile.weekday {
+  background-color: #e8f5e9; /* Light green for weekdays */
+  border: 2px solid black;
+}
+
+.tile.weekday:hover {
+  background-color: #c8e6c9; /* Slightly darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* No Data Tiles */
+.tile.no-data {
+  background-color: #fff3e0; /* Light yellow for no data */
+}
+
+.tile.no-data:hover {
+  background-color: #ffe0b2; /* Slightly darker yellow on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Tile Colors */
+.tile.faint-green {
+  background-color: #c8e6c9 !important; /* Light green */
+}
+
+.tile.medium-green {
+  background-color: #81c784 !important; /* Medium green */
+}
+
+.tile.dark-green {
+  background-color: #2e7d32 !important; /* Dark green */
+}
+
+/* Festival Highlighting */
+.tile.festival {
+  border: 4px solid #ff9800; /* Orange border for festivals */
+}
+
+.tile.festival:hover {
+  transform: scale(1.1); /* Slightly larger zoom for festival tiles */
+}
+
+/* Hover Tooltip */
+.tile-content {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation Buttons */
+.react-calendar__navigation button {
+  background-color: #51b8e4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.react-calendar__navigation button:hover {
+  background-color: #3dcb3d;
+}
+
+/* Month and Year Label */
+.react-calendar__navigation__label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.react-calendar{
+  display: inline-block;
+}
+
+.container-calender{
+  display: flex;
+  justify-content: center;
+}
+
+.legendd {
+  width: 150px;
+  height: 180px;
+  font-size: 0.9rem;
+}
+
+.legendd h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+/* Legend Colors */
+.legend-box.low-traffic {
+  background-color: #d0f0c0; /* Light green */
+}
+
+.legend-box.medium-traffic {
+  background-color: #81c784; /* Medium green */
+}
+
+.legend-box.high-traffic {
+  background-color: #2e7d32; /* Dark green */
+}
+
+.legend-box.festival-border {
+  border: 3px solid #ff9800; /* Orange border */
+}
+
+
