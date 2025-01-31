@@ -1,57 +1,176 @@
-/* TrafficStatus.css */
-
 .traffic-status-container {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .dropdown-container {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  button.update-button {
-    width: 100%;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.traffic-status-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.section-label {
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radio-option input[type="radio"] {
+  margin: 0;
+}
+
+.radio-option label {
+  font-size: 16px;
+  color: #444;
+}
+
+.map-container-status {
+  height: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.coordinates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.coordinate-box {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.coordinate-box label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.coordinate-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.status-selection {
+  margin-bottom: 20px;
+}
+
+.status-selection label {
+  display: block;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.status-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background: #1d4ed8;
+}
+
+.submit-button:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.submit-button.loading {
+  opacity: 0.7;
+}
+
+/* Leaflet specific styles */
+.leaflet-container {
+  z-index: 1;
+}
+
+.leaflet-control {
+  z-index: 2;
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+  .traffic-status-container {
     padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
   }
-  
-  button.update-button:hover {
-    background-color: #45a049;
+
+  .coordinates-grid {
+    grid-template-columns: 1fr;
   }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+
+  .map-container {
+    height: 300px;
   }
-  
-  option {
-    font-size: 14px;
-  }
-  
+}
+
+/* Status colors */
+.status-LOW {
+  color: #22c55e;
+}
+
+.status-MEDIUM {
+  color: #f59e0b;
+}
+
+.status-HIGH {
+  color: #ef4444;
+}

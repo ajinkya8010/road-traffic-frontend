@@ -13,11 +13,12 @@ import PotholeDisplay from "./routes/potholeDisplay/potholeDisplay";
 import ComplaintDisplay from "./routes/complaintDisplay/complaintDisplay";
 import UserDisplay from "./routes/userDisplay/userDisplay";
 import RouteHistory from "./routes/routeHistory/routeHistory";
-import LineScoreDate from "./routes/linescoredate/lineScoreDate";
-import LineScoreDateAll from "./routes/linescoredateall/lineScoreDateAll";
-import BarScoreTime from "./routes/barscoretime/barScoreTime";
+import CalendarApp from "./routes/trafficCalendar/trafficCalendar";
 import PieChartInput from "./routes/pieChartInput/pieCharInput";
 import TrafficStatus from "./routes/trafficStatus/trafficStatus";
+import LineScoreDate from "./routes/linescoredate/lineScoreDate";
+import LineWeekDay from "./routes/lineweekday/lineWeekDay";
+import TrafficPrediction from "./routes/trafficPrediction/trafficPrediction";
 
 
 function App() {
@@ -147,16 +148,20 @@ function App() {
           element: <RouteHistory />
         },
         {
-          path: "/line-score-date", 
+          path: "/predictive-analysis",
+          element:<TrafficPrediction/>
+        },
+        {
+          path: "/traffic-calendar", 
+          element: <CalendarApp/>
+        },
+        {
+          path: "/festival-analysis", 
           element: <LineScoreDate/>
         },
         {
-          path: "/line-score-date-all",
-          element:<LineScoreDateAll/>
-        },
-        {
-          path: "/bar-score-time",
-          element: <BarScoreTime/>
+          path: "/last-four-week", 
+          element: <LineWeekDay/ >
         },
         {
           path: "/complaint-count",

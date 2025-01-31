@@ -3,7 +3,6 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js';
 import apiRequest from "../../lib/apiRequest";
 
-// Register the necessary components for Chart.js
 import {
   CategoryScale,
   LinearScale,
@@ -24,7 +23,7 @@ ChartJS.register(
   Legend
 );
 
-const LineGraph = ({ pathId, timeRange }) => {
+const LineGraph = ({ pathId, timeRange, festivalDates }) => {
   const [graphData, setGraphData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -32,12 +31,23 @@ const LineGraph = ({ pathId, timeRange }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await apiRequest.get('/path-info/getPastPathData', {
-          params: { pathId, timeRange },
+        // Transform festivalDates into an array of ISO date strings
+        const dateList = festivalDates.map((festival) => festival.iso);
+        console.log(dateList);
+        
+
+        // Send the transformed dates in the request params
+        const response = await apiRequest.get('/path-info/getFestivalData', {
+          params: { 
+            pathId, 
+            timeRange, 
+            dates: JSON.stringify(dateList), // Pass as JSON string
+          },
         });
-        setGraphData(response.data.data);
-        console.log(response.data.data);
-        console.log(response.data.message);
+        const sortedData = response.data.sort((a, b) => a.year - b.year);
+        
+        setGraphData(sortedData);
+        console.log(sortedData);
       } catch (error) {
         console.error('Error fetching graph data:', error);
       } finally {
@@ -45,11 +55,11 @@ const LineGraph = ({ pathId, timeRange }) => {
       }
     };
 
-    if (pathId && timeRange) fetchData();
-  }, [pathId, timeRange]);
+    if (pathId && timeRange && festivalDates?.length) fetchData();
+  }, [pathId, timeRange, festivalDates]);
 
   const data = {
-    labels: graphData.map((entry) => entry.date),
+    labels: graphData.map((entry) => entry.year),
     datasets: [
       {
         label: 'Score',
@@ -66,25 +76,25 @@ const LineGraph = ({ pathId, timeRange }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-    title: {
-      display: false,
-      text: 'Graph Title (Optional)', // Add a title for the chart
-    },
-  },
-  scales: {
-    x: {
       title: {
-        display: true,
-        text: 'Date', // Label for the X-axis
+        display: false,
+        text: 'Graph Title (Optional)', // Add a title for the chart
       },
     },
-    y: {
-      title: {
-        display: true,
-        text: 'Score', // Label for the Y-axis
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Year', // Label for the X-axis
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Score', // Label for the Y-axis
+        },
       },
     },
-  },
   };
 
   if (loading) {
@@ -93,11 +103,11 @@ const LineGraph = ({ pathId, timeRange }) => {
 
   return (
     <div>
-      <h3>Line Graph: Score v/s Date</h3>
+      <h3>Line Graph: Score v/s Year</h3>
       {graphData.length > 0 ? (
         <div style={{ height: '400px', width: '100%' }}>
           <Line
-            key={`${pathId}-${timeRange}`} // Ensure a unique key for the chart instance
+            key={`${pathId}-${timeRange}`} 
             data={data}
             options={options}
           />
