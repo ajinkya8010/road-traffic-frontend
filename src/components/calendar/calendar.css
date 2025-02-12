@@ -41,7 +41,7 @@
 /* Weekend Highlighting */
 .tile.weekend {
   background-color: #ffebee; /* Light red for weekends */
-  color: #d32f2f; /* Dark red text for better contrast */
+  color: blue; /* Dark red text for better contrast */
   border: 2px solid black;
 }
 
@@ -72,21 +72,21 @@
 }
 
 /* Tile Colors */
-.tile.faint-green {
-  background-color: #c8e6c9 !important; /* Light green */
+.tile.faint-red {
+  background-color: #FFCDD2 !important; /* Light red */
 }
 
-.tile.medium-green {
-  background-color: #81c784 !important; /* Medium green */
+.tile.medium-red {
+  background-color: #E57373 !important; /* Medium red */
 }
 
-.tile.dark-green {
-  background-color: #2e7d32 !important; /* Dark green */
+.tile.dark-red {
+  background-color: #C62828 !important; /* Dark red */
 }
 
 /* Festival Highlighting */
 .tile.festival {
-  border: 4px solid #ff9800; /* Orange border for festivals */
+  border: 4px solid green; /* Orange border for festivals */
 }
 
 .tile.festival:hover {
@@ -171,19 +171,19 @@
 
 /* Legend Colors */
 .legend-box.low-traffic {
-  background-color: #d0f0c0; /* Light green */
+  background-color: #FFCDD2 ; /* Light green */
 }
 
 .legend-box.medium-traffic {
-  background-color: #81c784; /* Medium green */
+  background-color:  #E57373; /* Medium green */
 }
 
 .legend-box.high-traffic {
-  background-color: #2e7d32; /* Dark green */
+  background-color: #C62828 ; /* Dark green */
 }
 
 .legend-box.festival-border {
-  border: 3px solid #ff9800; /* Orange border */
+  border: 3px solid green; /* Orange border */
 }
 
 

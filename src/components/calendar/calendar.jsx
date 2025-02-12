@@ -43,9 +43,9 @@ const CustomCalendar = ({ data }) => {
     }
 
     const { score } = dayData;
-    if (score < 20) baseClass += ' faint-green';
-    else if (score < 40) baseClass += ' medium-green';
-    else baseClass += ' dark-green';
+    if (score < 20) baseClass += ' faint-red';
+    else if (score < 40) baseClass += ' medium-red';
+    else baseClass += ' dark-red';
 
     // Check if the date has a festival
     const hasFestival = festivals.some(
@@ -76,7 +76,7 @@ const CustomCalendar = ({ data }) => {
     const { score } = dayData;
     let category = '';
     if (score < 20) category = 'Low';
-    else if (score < 40) category = 'Medium';
+    else if (score < 60) category = 'Medium';
     else category = 'High';
 
     return `${category} (${score})`;
