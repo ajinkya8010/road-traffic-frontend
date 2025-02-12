@@ -30,7 +30,6 @@ const MapRouting = () => {
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [trafficStatus, setTrafficStatus] = useState([]);
-  const [userResponseDisplay, setUserResponseDisplay] = useState(false);
 
   
   const sourceInputRef = useRef(null);
@@ -365,8 +364,6 @@ const fetchSpots = async () => {
          name: spot.location,
          location: { lat: spot.lat, lng: spot.lng },
       }));  
-      console.log(spots);
-      
       setSpots(spots);
   } catch (error) {
       console.error("Error fetching traffic Spots:", error);
@@ -1650,132 +1647,172 @@ const fetchConstructions = async () => {
     };
 
     if (routePoints.length > 0 && isClicked) {
-      let score = 5 * potholes.length + 
-                  10 * spots.length + 
-                  5 * complaints.length + 
-                  10 * events.length +  
-                  3 * nearbyPlaces.length+
-                  10*banquethalls.length+ 
-                  1*gardens.length + 
-                  1*hospitals.length+
-                  1*hotels.length+
-                  2*malls.length+
-                  1*parkingbuildings.length+
-                  3*schools.length+
-                  10*diversions.length+
-                  10*constructions.length+
-                  9*trafficStatus.length;
+      let customScore = 5 * potholes.length + 
+                      10 * spots.length + 
+                      5 * complaints.length + 
+                      10 * events.length +  
+                      3 * nearbyPlaces.length +
+                      10 * banquethalls.length + 
+                      1 * gardens.length + 
+                      1 * hospitals.length +
+                      1 * hotels.length +
+                      2 * malls.length +
+                      1 * parkingbuildings.length +
+                      3 * schools.length +
+                      10 * diversions.length +
+                      10 * constructions.length +
+                      9 * trafficStatus.length;
 
+    const currentHour = new Date().getHours();
+    const currentDay = new Date().getDay();
 
-        const currentHour = new Date().getHours();
-        const currentDay = new Date().getDay();
-
-        if (currentHour >= 22 || currentHour < 8) {
-          score -= (10*diversions.length+
-                    10*constructions.length); 
-        }
-
-        // If current time is between 12:00 AM and 8:00 AM
-        if (currentHour >= 0 && currentHour < 8) {
-          score -= (10 * spots.length +
-                    5 * complaints.length +
-                    1 * gardens.length +
-                    1 * hospitals.length +
-                    1 * hotels.length +
-                    2 * malls.length +
-                    1 * parkingbuildings.length);
-              
-                    if (festival) {
-                        score -= 5; 
-                    }
-        } else if (festival) {
-          score += 5; 
-        }
-    let busScore = checkBuses(schools);
-    score+=busScore;
-
-    if (currentDay === 0 || currentDay === 6) { // 0: Sunday, 6: Saturday
-      score -= 3 * schools.length; 
-      score -= busScore; 
+    if (currentHour >= 22 || currentHour < 8) {
+        customScore -= (10 * diversions.length + 10 * constructions.length); 
     }
 
-    function getTrafficStatusUsingJsApi(origin, destination) {
-    const directionsService = new google.maps.DirectionsService();
-  
-      return new Promise((resolve, reject) => {
-          directionsService.route(
-              {
-                  origin: origin,
-                  destination: destination,
-                  travelMode: google.maps.TravelMode.DRIVING,
-                  drivingOptions: {
-                      departureTime: new Date(), // Use current time for real-time traffic
-                      trafficModel: "bestguess",
-                  },
-              },
-              (response, status) => {
-                  if (status === "OK") {
-                      const leg = response.routes[0].legs[0]; // Get the first route's leg
-                      const durationInTraffic = leg.duration_in_traffic.value; // Time in seconds with traffic
-                      const normalDuration = leg.duration.value; // Time in seconds without traffic
-  
-                      // Calculate traffic factor
-                      const trafficFactor = durationInTraffic / normalDuration;
-  
-                      // Determine traffic status
-                      if (trafficFactor > 1.5) {
-                          resolve("High");
-                      } else if (trafficFactor > 1.2) {
-                          resolve("Medium");
-                      } else {
-                          resolve("Low");
-                      }
-                  } else {
-                      console.error("Error fetching directions:", status);
-                      reject("Traffic data not available");
-                  }
-              }
-          );
-      });
-  }
-  
-  // Usage Example
-  (async function () {
-      const origin = sourceAddress;
-      const destination = destinationAddress; 
-  
-      try {
-          const trafficStatus = await getTrafficStatusUsingJsApi(origin, destination);
-          console.log(`Traffic status between ${origin} and ${destination}: ${trafficStatus}`);
-  
-          if (trafficStatus === "High" && totalScore <= 59) {
-              setTotalScore(60);
-              setUserResponseDisplay(true);
+    if (currentHour >= 0 && currentHour < 8) {
+        customScore -= (10 * spots.length +
+                        5 * complaints.length +
+                        1 * gardens.length +
+                        1 * hospitals.length +
+                        1 * hotels.length +
+                        2 * malls.length +
+                        1 * parkingbuildings.length);
               
-          }else if(trafficStatus === "Medium" && totalScore <=29){
-              setTotalScore(30);
-              setUserResponseDisplay(true);
-              
-          }else{
-            setTotalScore(score);
-          }
-      } catch (error) {
-          console.error("Error determining traffic status:", error);
-      }
-  })();
+        if (festival) {
+            customScore -= 5; 
+        }
+    } else if (festival) {
+        customScore += 5; 
+    }
+
+    let busScore = checkBuses(schools);
+    customScore += busScore;
+
+    if (currentDay === 0 || currentDay === 6) { // 0: Sunday, 6: Saturday
+        customScore -= 3 * schools.length; 
+        customScore -= busScore; 
+    }
+
+    // Normalize custom score to a scale of 0 to 100 using logarithmic scaling
+    const maxExpectedScore = 300; // Adjust this based on your expected maximum score
+    const normalizedCustomScore = (Math.log(customScore + 1) / Math.log(maxExpectedScore + 1)) * 100;
+
+    // Function to get traffic status using Google Maps API
+    async function getTrafficStatusUsingJsApi(origin, destination) {
+        const directionsService = new google.maps.DirectionsService();
+  
+        return new Promise((resolve, reject) => {
+            directionsService.route(
+                {
+                    origin: origin,
+                    destination: destination,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    drivingOptions: {
+                        departureTime: new Date(), // Use current time for real-time traffic
+                        trafficModel: "bestguess",
+                    },
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        const leg = response.routes[0].legs[0]; // Get the first route's leg
+                        const durationInTraffic = leg.duration_in_traffic.value; // Time in seconds with traffic
+                        const normalDuration = leg.duration.value; // Time in seconds without traffic
+  
+                        // Calculate traffic factor
+                        const trafficFactor = durationInTraffic / normalDuration;
+  
+                        // Determine traffic status
+                        if (trafficFactor > 1.9) {
+                            resolve("One");
+                        } else if (trafficFactor > 1.8) {
+                            resolve("Two");
+                        }else if (trafficFactor > 1.8) {
+                            resolve("Three");
+                        } else if (trafficFactor > 1.7) {
+                          resolve("Four");
+                        } else if (trafficFactor > 1.6) {
+                          resolve("Five");
+                        } else if (trafficFactor > 1.5) {
+                          resolve("Six");
+                        }  else if (trafficFactor > 1.4) {
+                          resolve("Seven");
+                        } else if (trafficFactor > 1.3) {
+                          resolve("Eight");
+                        } else if (trafficFactor > 1.2) {
+                          resolve("Nine");
+                        }  
+                        else {
+                          resolve("Ten");
+                        }
+                    } else {
+                        console.error("Error fetching directions:", status);
+                        reject("Traffic data not available");
+                    }
+                }
+            );
+        });
+    }
+
+    // Usage Example
+    (async function () {
+        const origin = sourceAddress;
+        const destination = destinationAddress; 
+  
+        try {
+            const trafficStatus = await getTrafficStatusUsingJsApi(origin, destination);
+            console.log(`Traffic status between ${origin} and ${destination}: ${trafficStatus}`);
+
+            // Assign weights to Google's traffic status
+            let googleScore;
+            if (trafficStatus === "One") {
+                googleScore = 100;
+            } else if (trafficStatus === "Two") {
+                googleScore = 90;
+            } else if (trafficStatus === "Three") {
+                googleScore = 80;
+            }else if (trafficStatus === "Four") {
+                googleScore = 70;
+            }else if (trafficStatus === "Five") {
+                googleScore = 60;
+            }else if (trafficStatus === "Six") {
+                googleScore = 50;
+            }else if (trafficStatus === "Seven") {
+                googleScore = 40;
+            }else if (trafficStatus === "Eight") {
+                googleScore = 30;
+            }else if (trafficStatus === "Nine") {
+              googleScore = 20;
+            }else {
+                googleScore = 10;
+            }
+            console.log("google score is "+googleScore+" "+"and normalizedCustomScore is "+ normalizedCustomScore);
+            
+            // Calculate final score with 70% weight for Google's traffic status and 30% for normalized custom score
+            const finalScore = (0.7 * googleScore) + (0.3 * normalizedCustomScore);
+
+            // Set the final score
+            setTotalScore(finalScore);
+        } catch (error) {
+            console.error("Error determining traffic status:", error);
+        }
+    })();
   
   
     
     if(!isSent){
       const matchingRouteId = findMatchingRoute();
       if (matchingRouteId) {
-        const timeRange = determineTimeRange(new Date()); // Define this function based on your time range logic
-        const level = score > 50 ? 'high' : score > 20 ? 'medium' : 'low'; // Example level calculation
+        const timeRange = determineTimeRange(new Date()); 
+        const level = totalScore >= 80 ? 'very hard' :
+              totalScore >= 60 ? 'hard' :
+              totalScore >= 30 ? 'medium' :
+              totalScore >= 15 ? 'low' : 'very low';
         const pathInfo = {
             pathId: matchingRouteId,
             timeRange,
             date: new Date(),
-            score,
+            totalScore,
             level,
           };
           sendPathInfoToBackend(pathInfo);
@@ -2001,7 +2038,6 @@ const fetchConstructions = async () => {
         case 'spots':
         
         spots.forEach((spot, index) => {
-          console.log(spot);
           
           const marker = new window.google.maps.Marker({
             position: { lat: spot.location.lat, lng: spot.location.lng },
@@ -2648,7 +2684,7 @@ const fetchConstructions = async () => {
               color: '#555',
               animation: 'fadeIn 1s',
             }}>
-              Traffic Score: {totalScore}
+              Traffic Score: {Math.ceil(totalScore)}
             </span>
           </p>
     </div>)}
@@ -2678,13 +2714,7 @@ const fetchConstructions = async () => {
                 </span>
                 Constructions - {constructions.length}
               </p>
-            )}
-            {userResponseDisplay && (
-              <p id="feature">
-                Real-time citizen response 
-              </p>
-            )
-            }     
+            )}   
             {potholes.length > 0 && (
               <p id="feature">
                 <span className="marker-color" style={{ backgroundColor: '#6a0306' }}></span>
