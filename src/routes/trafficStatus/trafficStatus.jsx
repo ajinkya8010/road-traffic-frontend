@@ -17,7 +17,7 @@ const MapMarker = ({ position, setPosition }) => {
 const TrafficStatus = () => {
   const [locationType, setLocationType] = useState('');
   const [position, setPosition] = useState(null);
-  const [category, setCategroy] = useState('select');
+  const [category, setCategory] = useState('Accidents/Crashes');
   const [isLoading, setIsLoading] = useState(false);
 
   const getCurrentLocation = () => {
@@ -135,7 +135,7 @@ const TrafficStatus = () => {
                 <select
                   id="status"
                   value={category}
-                  onChange={(e) => setCategroy(e.target.value)}
+                  onChange={(e) => setCategory(e.target.value)}
                   className="status-dropdown"
                 >
                   <option value="Accidents/Crashes">Accidents/Crashes</option>
