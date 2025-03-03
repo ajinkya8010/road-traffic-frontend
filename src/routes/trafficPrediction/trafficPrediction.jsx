@@ -387,13 +387,13 @@ const TrafficPrediction = () => {
         <div className="message-predict-box">
           <div className="message-predict">
               <p style={{
-                color: totalScore <= 15 
+                color: score <= 15 
                   ? 'green' 
-                  : totalScore <= 29 
+                  : score <= 29 
                     ? 'lightgreen' 
-                    : totalScore <= 59 
+                    : score <= 59 
                       ? 'orange' 
-                      : totalScore <= 79 
+                      : score <= 79 
                         ? 'red' 
                         : 'darkred',
                 fontSize: '20px',

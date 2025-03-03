@@ -600,7 +600,8 @@ const fetchTrafficUpdates = async () => {
   try {
     // Fetch the traffic status data from the backend
     const response = await apiRequest.get("/traffic-status/getTrafficStatus");
-    const data = response.data.data;
+    const data = response.data;
+    console.log(data);
 
     // Get the current time for comparison
     const currentTime = new Date();
@@ -1815,7 +1816,7 @@ const fetchConstructions = async () => {
             totalScore,
             level,
           };
-          sendPathInfoToBackend(pathInfo);
+          // sendPathInfoToBackend(pathInfo);
         }
         setIsSent(true);
       }
@@ -2238,7 +2239,7 @@ const fetchConstructions = async () => {
             title: `Latest Update`,
             animation: google.maps.Animation.BOUNCE
           });
-
+          
           const infoWindow = new window.google.maps.InfoWindow({
             content: `
               <div>
