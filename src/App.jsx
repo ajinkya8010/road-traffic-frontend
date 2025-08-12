@@ -14,7 +14,6 @@ import ComplaintDisplay from "./routes/complaintDisplay/complaintDisplay";
 import UserDisplay from "./routes/userDisplay/userDisplay";
 import RouteHistory from "./routes/routeHistory/routeHistory";
 import CalendarApp from "./routes/trafficCalendar/trafficCalendar";
-import PieChartInput from "./routes/pieChartInput/pieCharInput";
 import TrafficStatus from "./routes/trafficStatus/trafficStatus";
 import LineScoreDate from "./routes/linescoredate/lineScoreDate";
 import LineWeekDay from "./routes/lineweekday/lineWeekDay";
@@ -162,10 +161,6 @@ function App() {
         {
           path: "/last-four-week", 
           element: <LineWeekDay/ >
-        },
-        {
-          path: "/complaint-count",
-          element: <PieChartInput/>
         },
         {
           path: "/traffic-status",
