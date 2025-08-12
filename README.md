@@ -67,6 +67,8 @@ A modern web application for monitoring and analyzing road traffic data, built w
 
 4. Open your browser and visit `http://localhost:5173`
 
+5. To setup backend follow steps mentioned in readme.md of https://github.com/Akashbh011/road-traffic-backend
+
 ### Available Scripts
 
 - `npm run dev` - Start development server
